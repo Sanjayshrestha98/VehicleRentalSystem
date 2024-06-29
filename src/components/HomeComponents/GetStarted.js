@@ -13,7 +13,7 @@ function GetStarted() {
                 <div className='flex flex-col gap-4 lg:px-20 px-5'>
                     <h3 className='text-4xl font-semibold'>Explore cars for every occasion</h3>
                     <h3 className=''>From luxury sedans to rugged SUVs, find the ideal car for any occasion. Our extensive fleet is available for short-term and long-term rentals, ensuring you have the right vehicle at the right time. Explore our options and start your adventure today.</h3>
-                    <Link to={'/coaching'} className='btn-primary max-w-fit'>Explore</Link>
+                    <Link to={'/explore'} className='btn-primary max-w-fit'>Explore</Link>
                 </div>
             </div>
         </div>

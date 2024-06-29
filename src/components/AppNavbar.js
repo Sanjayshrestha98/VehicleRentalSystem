@@ -147,15 +147,15 @@ const AppNavbar = () => {
                                     </button>
                                 </Link>
                             }
-                            <div className="  cursor-pointer ">
+                            {/* <div className="  cursor-pointer ">
                                 <Link to={"/login"}>
                                     <button className="bg-current py-2 text-white px-6 text-sm hover:bg-blue-200 duration-150 hover:scale-105 rounded-lg">
                                         Login
                                     </button>
                                 </Link>
-                            </div>
+                            </div> */}
 
-                            {/* {isAuthenticated ? (
+                            {isAuthenticated ? (
                                 <div className="flex items-center ml-4">
                                     <div className="flex">
                                         <span className="group relative inline-block">
@@ -235,21 +235,21 @@ const AppNavbar = () => {
                                 <div className="flex gap-2 mr-2 ml-5 ">
                                     <div className="cursor-pointer ">
                                         <Link to={"/login"}>
-                                            <button className="px-3 py-2 text-sm hover:bg-blue-200 duration-150 hover:scale-105 rounded-full">
+                                            <button className="bg-current py-2 text-white px-6 text-sm hover:bg-blue-200 duration-150 hover:scale-105 rounded-lg">
                                                 Login
                                             </button>
                                         </Link>
                                     </div>
 
-                                    <div className="  cursor-pointer ">
+                                    {/* <div className="  cursor-pointer ">
                                         <Link to={"/signup"}>
                                             <button className="px-4 py-2 border text-sm hover:bg-blue-200 duration-150 hover:scale-105 rounded-full">
                                                 Sign Up
                                             </button>
                                         </Link>
-                                    </div>
+                                    </div> */}
                                 </div>
-                            )} */}
+                            )}
 
                         </div>
                     </div>

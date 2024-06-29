@@ -13,10 +13,11 @@ const user = {
 const navigation = [
   { name: 'dashboard', href: '/dashboard' },
   // { name: 'users', href: '/dashboard/users' },
-  { name: 'events', href: '/dashboard/events' },
-  { name: 'contact', href: '/dashboard/contact' },
-  { name: 'blog', href: '/dashboard/blog' },
-  { name: 'sessions', href: '/dashboard/sessions' },
+  { name: 'vehicle', href: '/dashboard/vehicle' },
+  // { name: 'events', href: '/dashboard/events' },
+  // { name: 'contact', href: '/dashboard/contact' },
+  // { name: 'blog', href: '/dashboard/blog' },
+  // { name: 'sessions', href: '/dashboard/sessions' },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '/profile' },

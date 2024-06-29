@@ -58,7 +58,7 @@ function AddUser({ modalIsOpen, closeModal, getRoute }) {
                         contact: "",
                         address: "",
                         password: "password",
-                        // role:'superadmin',
+                        // role:'super-admin',
                     }}
                     validationSchema={validationSchema}
                     onSubmit={(values, actions) => {

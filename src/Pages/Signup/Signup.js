@@ -21,8 +21,6 @@ function Signup() {
             .matches(/^[9]\d{9}$/, "Invalid phone number"),
         address: yup.string()
             .required('This Field is required'),
-        expertiseLevel: yup.string()
-            .required('This Field is required'),
         password: yup
             .string()
             .required('Password is required')
@@ -37,13 +35,14 @@ function Signup() {
     // Function to handle form submission
     const handleFormSubmit = async (values, actions) => {
         try {
-
-            const data = values
+            let data = { ...values }
 
             delete data.confirmpassword
 
-            // Make an Axios POST request
-            const response = await axios.post('/user/register', values);
+            console.log('data', data)
+            console.log('values', values)
+
+            const response = await axios.post('/user/register', data);
 
             if (response.data.success) {
                 toast.success('Registration Successfull')
@@ -53,11 +52,9 @@ function Signup() {
                 })
             }
 
-            // Handle the response as needed (e.g., redirect, show a success message)
         } catch (error) {
-            // Handle errors (e.g., show an error message)
             console.error('Error submitting form:', error);
-            toast.error(error.response.data.message)
+            toast.error(error.response.data.message || 'Error submitting form:')
         }
     };
 
@@ -92,7 +89,7 @@ function Signup() {
                             address: "",
                             password: "",
                             confirmpassword: "",
-                            // role:'superadmin',
+                            // role:'super-admin',
                         }}
                         validationSchema={validationSchema}
                         onSubmit={(values, actions) => {
@@ -150,7 +147,7 @@ function Signup() {
                                     <FieldError message={props.touched.address && props.errors.address} />
 
                                 </div>
-                                
+
                                 <div>
                                     <label htmlFor="contact" className="block text-sm font-medium leading-6 text-gray-900">
                                         Contact
@@ -229,7 +226,7 @@ function Signup() {
                                         />
                                     </div>
                                     <FieldError message={props.touched.confirmpassword && props.errors.confirmpassword} />
-
+                                    {console.log(props.errors)}
                                 </div>
 
 

@@ -27,7 +27,7 @@ function Login() {
 
         setTimeout(() => {
           setIsAuthenticated(true)
-          if (response.data.data.role.includes('admin') || response.data.data.role.includes('superadmin')) {
+          if (response.data.data.role.includes('admin') || response.data.data.role.includes('super-admin')) {
             navigate('/dashboard')
           } else navigate('/')
         }, 400)

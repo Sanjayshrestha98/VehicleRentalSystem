@@ -23,7 +23,7 @@ function EditSessionModal() {
 
     const getSession = async () => {
         try {
-            let result = await axios.get('/coaching/' + id)
+            let result = await axios.get('/explore/' + id)
 
             if (result.data.success) {
                 setSessionData(result.data.data)
@@ -69,7 +69,7 @@ function EditSessionModal() {
                 formData.append('image', image)
             }
 
-            let result = await axios.put('/coaching/' + id, formData)
+            let result = await axios.put('/explore/' + id, formData)
 
             if (result.data.success) {
                 toast.success('Session Edited Successfully')

@@ -45,7 +45,7 @@ function AddSessionModal({ modalIsOpen, closeModal, getRoute }) {
             if (image) {
                 formData.append('image', image)
 
-                let result = await axios.post('/coaching', formData)
+                let result = await axios.post('/explore', formData)
 
                 if (result.data.success) {
                     toast.success('Session Added Successfully')

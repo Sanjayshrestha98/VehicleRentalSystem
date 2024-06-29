@@ -26,7 +26,7 @@ import SingleBlogPage from './Pages/Blog/SingleBlogPage';
 import AdminSessions from './Pages/AdminPages/Sessions/AdminSessions';
 import AddSessionModal from './Pages/AdminPages/Sessions/AddSessionModal';
 import EditSessionModal from './Pages/AdminPages/Sessions/EditSessionModal';
-import Coaching from './Pages/Coaching/Coaching';
+import Coaching from './Pages/Explore/Explore';
 import Success from './Pages/payment/Success';
 import Failed from './Pages/payment/Failed';
 import About from './Pages/About/About';
@@ -34,13 +34,15 @@ import Forum from './Pages/Forum/Forum';
 import AddForum from './Pages/Forum/AddForum';
 import SingleForumPage from './Pages/Forum/SingleForumPage';
 import Notices from './Pages/Notices/Notices';
+import SingleVehicle from './Pages/Vehicle/SingleVehicle';
+import AdminVehicle from './Pages/AdminPages/Vehicle/AdminVehicle';
 
 function App() {
 
   return (
     <div>
       <AuthContextProvider>
-        <Toaster />
+        <Toaster position='top-right' />
         <div className='min-h-screen flex flex-col'>
           <AppNavbar />
           <AdminNavbar />
@@ -51,9 +53,12 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/vehicle/:sku" element={<SingleVehicle />} />
+
+
               <Route path="/events" element={<EventPage />} />
               <Route path="/blogs" element={<BlogPage />} />
-              <Route path="/coaching" element={<Coaching />} />
+              <Route path="/explore" element={<Coaching />} />
               <Route path="/success" element={<Success />} />
               <Route path="/failure" element={<Failed />} />
               <Route path="/about" element={<About />} />
@@ -96,6 +101,14 @@ function App() {
                 element={
                   <ProtectedAdminRoute>
                     <Dashboard />
+                  </ProtectedAdminRoute>
+                }
+              />
+              <Route
+                path="/dashboard/vehicle"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminVehicle />
                   </ProtectedAdminRoute>
                 }
               />

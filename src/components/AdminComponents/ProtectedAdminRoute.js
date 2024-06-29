@@ -7,7 +7,7 @@ const ProtectedAdminRoute = ({ children }) => {
   
     const userRole = userDetails?.role;
   
-    if (userRole && (userRole.includes("superadmin") || userRole.includes("admin"))) {
+    if (userRole && (userRole.includes("super-admin") || userRole.includes("admin"))) {
       return children;
     }
   

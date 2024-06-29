@@ -37,7 +37,7 @@ function AdminSessions() {
                 confirmButtonText: 'Yes, Delete it!'
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    let result = await axios.delete('coaching/' + id)
+                    let result = await axios.delete('explore/' + id)
                     if (result.data.success) {
                         getAllSession()
                         toast.success('Deleted Successfully')
@@ -74,7 +74,7 @@ function AdminSessions() {
 
     const getAllSession = async () => {
         try {
-            let result = await axios.get('/coaching', {
+            let result = await axios.get('/explore', {
                 params: {
                     search: keyword,
                     page: currentSessionPage,
