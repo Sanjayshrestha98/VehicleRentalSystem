@@ -6,7 +6,6 @@ import { AuthContext } from '../../context/authContext'
 import { Link } from 'react-router-dom'
 import { CgAlarm } from 'react-icons/cg'
 import dayjs from 'dayjs'
-import Notices from '../Notices/Notices'
 
 function Profile() {
     const { userDetails, setUserDetails } = useContext(AuthContext)
@@ -207,7 +206,7 @@ function Profile() {
                 </div>
             </div>
 
-            <Notices />
+            {/* <Notices /> */}
             {/* <div className='bg-white p-5 my-5 rounded-lg shadow-xl'>
                 <div className="px-4 sm:px-0">
                     <h3 className="text-base font-semibold leading-7 text-gray-900">My Notices</h3>
