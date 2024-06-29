@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 import { BsBell } from 'react-icons/bs';
 
 const AppNavbar = () => {
-    const authUser = useContext(AuthContext);
+    const { isAuthenticated, userDetails } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const [keyword, setKeyword] = useState('')
@@ -21,8 +21,6 @@ const AppNavbar = () => {
     const [notificationModal, setNotificationModal] = useState(false);
     const [sideNav, setSideNav] = useState(false);
     const [categoryData, setCategoryData] = useState([])
-
-    let isAuthenticated = authUser?.isAuthenticated;
 
     const navigation = [
         { name: 'home', href: '/' },
@@ -80,6 +78,8 @@ const AppNavbar = () => {
             }
         })
     }
+
+    console.log('navbar', userDetails)
 
     return (
         <div
@@ -166,10 +166,10 @@ const AppNavbar = () => {
                                                 data-dropdown-toggle="dropdown"
                                             >
                                                 <div className=" overflow-hidden rounded-full">
-                                                    {authUser?.userDetails?.image ? (
+                                                    {userDetails?.image ? (
                                                         <img
                                                             className="w-7 rounded-full object-cover object-center sm:w-8 md:w-8 h-7"
-                                                            src={`${process.env.REACT_APP_IMG_URI}${authUser.userDetails?.image}`}
+                                                            src={`${process.env.REACT_APP_IMG_URI}${userDetails?.image}`}
                                                             alt="user photo"
                                                         />
                                                     ) : (
@@ -306,14 +306,14 @@ const AppNavbar = () => {
                                             </Link>
                                         </div>
 
-                                        {
+                                        {/* {
                                             isAuthenticated &&
                                             <Link to={"/notices"}>
                                                 <button className=" py-2 px-2 text-sm hover:bg-blue-200 duration-150 hover:scale-105 rounded-lg">
                                                     <BsBell size={20} />
                                                 </button>
                                             </Link>
-                                        }
+                                        } */}
                                         {isAuthenticated ? (
                                             <div className="group relative inline-block">
                                                 <button
@@ -323,10 +323,10 @@ const AppNavbar = () => {
                                                     data-dropdown-toggle="dropdown"
                                                 >
                                                     <div className=" overflow-hidden rounded-full">
-                                                        {authUser?.userDetails?.image ? (
+                                                        {userDetails?.image ? (
                                                             <img
                                                                 className="w-7 rounded-full object-cover object-center sm:w-8 md:w-8 h-7"
-                                                                src={`${process.env.REACT_APP_IMG_URI}${authUser.userDetails?.image}`}
+                                                                src={`${process.env.REACT_APP_IMG_URI}${userDetails?.image}`}
                                                                 alt="user photo"
                                                             />
                                                         ) : (

@@ -3,9 +3,10 @@ import axios from '../../axios'
 import React, { useEffect, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import Modal from 'react-modal'
-import { BiLoader } from 'react-icons/bi'
+import { BiLoader, BiSolidStar, BiStar } from 'react-icons/bi'
 import { BsChevronDoubleRight } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
+import Rating from 'react-rating'
 
 
 
@@ -194,7 +195,8 @@ function Explore() {
                                 </div>
 
                                 <div className='p-3 px-4 text-center'>
-                                    <h2 className='lg:text-3xl text-xl font-bold'>{value?.name}</h2>
+                                    <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128'/>} />
+                                    <h2 className='lg:text-2xl text-xl font-bold mt-3'>{value?.name}</h2>
                                     <p> <b className='text-blue-700'>Rs. {value.price}</b> / Day</p>
 
                                     <div className='grid grid-cols-2 justify-center gap-8 my-10'>

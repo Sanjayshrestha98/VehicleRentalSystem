@@ -111,6 +111,7 @@ function AddVehicle({ modalIsOpen, closeModal, getRoute }) {
                     initialValues={{
                         name: "",
                         description: "",
+                        seat: "",
                         type: "",
                         price: "",
                         engine: "",

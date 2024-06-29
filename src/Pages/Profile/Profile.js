@@ -10,8 +10,9 @@ import dayjs from 'dayjs'
 function Profile() {
     const { userDetails, setUserDetails } = useContext(AuthContext)
 
+    console.log('userDetails', userDetails)
+
     const [profileDetails, setProfileDetails] = useState([])
-    console.log(profileDetails)
     const [editProfile, setEditProfile] = useState()
     const [bookingData, setBookingData] = useState()
     const [notices, setNotices] = useState()
@@ -62,10 +63,10 @@ function Profile() {
         }
     }
 
-    useEffect(() => {
-        getNotices()
-        getBookings()
-    }, [])
+    // useEffect(() => {
+    //     getNotices()
+    //     getBookings()
+    // }, [])
 
     const uploadProfilePicture = async (img) => {
         try {
@@ -73,7 +74,7 @@ function Profile() {
                 const formData = new FormData()
 
                 formData.append('image', img)
-                let result = await axios.put('/user/update-image', formData)
+                let result = await axios.put('/user/upload-pp', formData)
                 if (result.data.success) {
                     toast.success('Image Uploaded')
                     const localData = JSON.parse(localStorage.getItem('_hw_userDetails'))
@@ -87,14 +88,13 @@ function Profile() {
             }
         } catch (ERR) {
             console.log(ERR)
+            toast.error(ERR.response.data.msg || "Failed to change image, try again later")
         }
     }
 
     useEffect(() => {
         getProfileDetails()
     }, [])
-
-    console.log('profileDetails?.role?', profileDetails?.role?.includes('super-admin'))
 
     return (
         <div className="h-full bg-gray-50 p-8 max-w-7xl mx-auto">
@@ -103,6 +103,7 @@ function Profile() {
                 editProfile &&
                 <EditProfile modalIsOpen={editProfile} closeModal={closeEditProfile} getRoute={getProfileDetails} profileDetails={profileDetails} />
             }
+
             <div className="bg-white rounded-lg shadow-xl pb-8">
 
                 <div className="flex flex-col items-center ">
@@ -121,9 +122,8 @@ function Profile() {
                 </div>
                 <div className="flex-1 flex flex-col items-center lg:items-end justify-end px-8 mt-2">
                     <div className="flex items-center space-x-4 mt-2">
-
                         {
-                            (profileDetails?.role?.includes('super-admin') || profileDetails?.role?.includes('admin')) &&
+                            (profileDetails?.role?.includes('super-admin') || profileDetails?.role?.includes('admin') || userDetails?.role?.includes('admin') || userDetails?.role?.includes('super-admin')) &&
 
                             <Link to={'/dashboard'} className='flex items-center bg-green-800 hover:bg-green-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100'>
                                 Dashboard

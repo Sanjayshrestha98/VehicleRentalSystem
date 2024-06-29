@@ -30,7 +30,7 @@ function EditProfile({ modalIsOpen, closeModal, getRoute, profileDetails }) {
     const handleFormSubmit = async (values, actions) => {
         try {
             // Make an Axios POST request
-            const response = await axios.put('/user/update-profile/', values);
+            const response = await axios.put('/user/update-profile/' + userDetails._id, values);
 
             if (response.data.success) {
                 toast.success('Editing Successfull')
