@@ -22,6 +22,8 @@ import Failed from './Pages/payment/Failed';
 import About from './Pages/About/About';
 import SingleVehicle from './Pages/Vehicle/SingleVehicle';
 import AdminVehicle from './Pages/AdminPages/Vehicle/AdminVehicle';
+import MyRentals from './Pages/MyRentals/MyRentals';
+import BecomeAHost from './Pages/BecomeAHost/BecomeAHost';
 
 function App() {
 
@@ -40,19 +42,35 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/vehicle/:sku" element={<SingleVehicle />} />
- 
+
               <Route path="/explore" element={<Coaching />} />
               <Route path="/success" element={<Success />} />
               <Route path="/failure" element={<Failed />} />
-              <Route path="/about" element={<About />} /> 
+              <Route path="/about" element={<About />} />
 
               {/* Auth Pages */}
- 
+
               <Route
                 path="/profile"
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-rentals"
+                element={
+                  <ProtectedRoute>
+                    <MyRentals />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/become-a-host"
+                element={
+                  <ProtectedRoute>
+                    <BecomeAHost />
                   </ProtectedRoute>
                 }
               />
@@ -92,7 +110,7 @@ function App() {
                     <AdminContact />
                   </ProtectedAdminRoute>
                 }
-              /> 
+              />
 
             </Routes>
           </div>

@@ -173,12 +173,19 @@ function Explore() {
 
             <div className='grid md:grid-cols-3 gap-7'>
                 <select className='inputfield'>
-                    <option>Sort By Vehicle type</option>
+                    <option value={""}>Sort By Vehicle type</option>
+                    <option value={"two-wheeler"}>Two Wheeler</option>
+                    <option value={"four-wheeler"}>Four-Wheeler</option>
                 </select>
                 <select className='inputfield'>
-                    <option>Filter By Price</option>
+                    <option value={""}>Filter By Price</option>
+                    <option value={""}>Filter By Price</option>
+                    <option value={""}>Filter By Price</option>
                 </select>
-                <input type='string' className='inputfield' placeholder='Search Here..............' />
+
+                <input type='string' className='inputfield' onChange={()=>{
+                    
+                }} placeholder='Search Here..............' />
             </div>
 
             <div className='grid md:grid-cols-3 gap-7 mt-10'>
@@ -195,7 +202,7 @@ function Explore() {
                                 </div>
 
                                 <div className='p-3 px-4 text-center'>
-                                    <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128'/>} />
+                                    <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} />
                                     <h2 className='lg:text-2xl text-xl font-bold mt-3'>{value?.name}</h2>
                                     <p> <b className='text-blue-700'>Rs. {value.price}</b> / Day</p>
 

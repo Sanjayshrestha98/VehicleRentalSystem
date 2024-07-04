@@ -28,6 +28,12 @@ const AppNavbar = () => {
         { name: 'services', href: '/services' },
         { name: 'contact us', href: '/contact' },
     ]
+    const authnavigation = [
+        { name: 'home', href: '/' },
+        { name: 'My Rentals', href: '/my-rentals' },
+        { name: 'Become a Host', href: '/become-a-host' },
+        { name: 'contact us', href: '/contact' },
+    ]
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -110,7 +116,32 @@ const AppNavbar = () => {
                         </button>
                     </div>
                     <div className="hidden lg:flex lg:gap-x-12 ">
-                        {navigation.map((item, index) => (
+                        {isAuthenticated ? authnavigation.map((item, index) => (
+                            <div role='button' key={index} onClick={() => {
+                                if (!item.children) {
+                                    navigate(item.href)
+                                }
+                            }} href={item.href} className={`relative capitalize font-semibold text-sm group hover:border-b-blue-700 px-3 hover:border-b-2 border-b-2 border-transparent py-2 ${location.pathname === item.href &&
+                                "text-blue-700 "
+                                }`}>
+                                {item.name}
+                                {
+                                    item.children &&
+                                    <div className='hidden group-hover:block absolute pt-5 w-[150px] left-0'>
+                                        <ul>
+                                            {
+                                                item.children.map((value, index) => (
+                                                    <li key={index} onClick={() => {
+                                                        navigate('/product', { state: { category: value._id } });
+                                                    }} role='button' className='p-2 border hover:bg-gray-50 bg-white capitalize'>{value.name}</li>
+                                                ))}
+                                        </ul>
+
+                                    </div>
+
+                                }
+                            </div>
+                        )) : navigation.map((item, index) => (
                             <div role='button' key={index} onClick={() => {
                                 if (!item.children) {
                                     navigate(item.href)
@@ -139,14 +170,14 @@ const AppNavbar = () => {
                     </div>
                     <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-5">
                         <div className="flex items-center gap-3">
-                            {
+                            {/* {
                                 isAuthenticated &&
                                 <Link to={"/notices"}>
                                     <button className=" py-2 px-2 text-sm hover:bg-blue-200 duration-150 hover:scale-105 rounded-lg">
                                         <BsBell size={20} />
                                     </button>
                                 </Link>
-                            }
+                            } */}
                             {/* <div className="  cursor-pointer ">
                                 <Link to={"/login"}>
                                     <button className="bg-current py-2 text-white px-6 text-sm hover:bg-blue-200 duration-150 hover:scale-105 rounded-lg">
@@ -282,7 +313,15 @@ const AppNavbar = () => {
                             <div className="mt-6 flow-root">
                                 <div className="-my-6 divide-y divide-gray-500/10">
                                     <div className="space-y-2 py-6">
-                                        {navigation.map((item, index) => (
+                                        {isAuthenticated ? authnavigation.map((item, index) => (
+                                            <a
+                                                key={index}
+                                                href={item.href}
+                                                className="-mx-3 capitalize block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                            >
+                                                {item.name}
+                                            </a>
+                                        )) : navigation.map((item, index) => (
                                             <a
                                                 key={index}
                                                 href={item.href}
