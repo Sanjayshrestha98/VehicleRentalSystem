@@ -6,12 +6,10 @@ import { AuthContext } from '../../context/authContext'
 import { Link } from 'react-router-dom'
 import { CgAlarm } from 'react-icons/cg'
 import dayjs from 'dayjs'
+import ConfirmPassword from './ConfirmPassword'
 
 function Profile() {
     const { userDetails, setUserDetails } = useContext(AuthContext)
-
-    console.log('userDetails', userDetails)
-
     const [profileDetails, setProfileDetails] = useState([])
     const [editProfile, setEditProfile] = useState()
     const [bookingData, setBookingData] = useState()
@@ -63,11 +61,6 @@ function Profile() {
         }
     }
 
-    // useEffect(() => {
-    //     getNotices()
-    //     getBookings()
-    // }, [])
-
     const uploadProfilePicture = async (img) => {
         try {
             if (img) {
@@ -96,137 +89,155 @@ function Profile() {
         getProfileDetails()
     }, [])
 
-    return (
-        <div className="h-full bg-gray-50 p-8 max-w-7xl mx-auto">
+    const [tab, setTab] = useState(1)
 
-            {
+    const renderUI = (tab) => {
+        try {
+            switch (tab) {
+                case 1:
+                    return <EditProfile modalIsOpen={editProfile} closeModal={closeEditProfile} getRoute={getProfileDetails} profileDetails={profileDetails} />
+                case 2:
+                    return <ConfirmPassword />
+                case 3:
+                    return <div>Hello 3</div>
+                case 4:
+                    return <div>Hello 4</div>
+            }
+        } catch (ERR) {
+
+        }
+    }
+
+
+    return (
+        <div className="h-full bg-gray-50 p-8  mx-auto">
+
+            {/* {
                 editProfile &&
                 <EditProfile modalIsOpen={editProfile} closeModal={closeEditProfile} getRoute={getProfileDetails} profileDetails={profileDetails} />
-            }
-
-            <div className="bg-white rounded-lg shadow-xl pb-8">
-
-                <div className="flex flex-col items-center ">
+            } */}
+            <div className='grid grid-cols-8 gap-5'>
+                <div className=' col-span-2 rounded-lg border bg-white'>
+                    <ul className='space-y-3 p-6'>
+                        <li onClick={() => {
+                            setTab(1)
+                        }} className={`${tab === 1 ? "bg-gray-200" : "bg-white"} p-4 border border-transparent rounded-lg cursor-pointer `}><p>Profile Settings</p><p className='text-xs'>Edit Personal Information and Login Credentials</p></li>
+                        <li onClick={() => {
+                            setTab(2)
+                        }} className={`${tab === 2 ? "bg-gray-200" : "bg-white"} p-4 border border-transparent rounded-lg cursor-pointer `}><p>Change Password</p><p className='text-xs'>Change Password of the System</p></li>
+                        <li onClick={() => {
+                            setTab(3)
+                        }} className={`${tab === 3 ? "bg-gray-200" : "bg-white"} p-4 border border-transparent rounded-lg cursor-pointer `}><p>My Booking Spendings</p><p className='text-xs'>View the total details of your booking transaction</p></li>
+                        <li onClick={() => {
+                            setTab(4)
+                        }} className={`${tab === 4 ? "bg-gray-200" : "bg-white"} p-4 border border-transparent rounded-lg cursor-pointer `}><p>My Income</p><p className='text-xs'>See the total transaction amount from your added vehicle</p></li>
+                    </ul>
+                </div>
+                <div className='col-span-6'>
                     {
-                        profileDetails?.image ?
-
-                            <img alt='user' src={`${process.env.REACT_APP_IMG_URI}${profileDetails?.image}`} className="w-40 border-4 mt-5 border-white rounded-full" />
-                            :
-                            <img alt='user' src="/defaultUserImage.png" className="w-40 border-4 mt-5 border-white rounded-full" />
-
+                        renderUI(tab)
                     }
-                    <div className="flex flex-col items-center space-x-2 mt-2">
-                        <p className="text-2xl">{profileDetails?.firstname} {profileDetails?.lastname}</p>
-                        <p className="font-semibold opacity-60 uppercase"> {profileDetails?.role}</p>
+                    {/* <div className="bg-white rounded-lg shadow-xl pb-8">
+                        <div className="flex flex-col items-center ">
+                            {
+                                profileDetails?.image ?
+
+                                    <img alt='user' src={`${process.env.REACT_APP_IMG_URI}${profileDetails?.image}`} className="w-40 border-4 mt-5 border-white rounded-full" />
+                                    :
+                                    <img alt='user' src="/defaultUserImage.png" className="w-40 border-4 mt-5 border-white rounded-full" />
+
+                            }
+                            <div className="flex flex-col items-center space-x-2 mt-2">
+                                <p className="text-2xl">{profileDetails?.firstname} {profileDetails?.lastname}</p>
+                                <p className="font-semibold opacity-60 uppercase"> {profileDetails?.role}</p>
+                            </div>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center lg:items-end justify-end px-8 mt-2">
+                            <div className="flex items-center space-x-4 mt-2">
+                                {
+                                    (profileDetails?.role?.includes('super-admin') || profileDetails?.role?.includes('admin') || userDetails?.role?.includes('admin') || userDetails?.role?.includes('super-admin')) &&
+
+                                    <Link to={'/dashboard'} className='flex items-center bg-green-800 hover:bg-green-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100'>
+                                        Dashboard
+                                    </Link>
+                                }
+                                <input ref={uploadRef} type='file' className='hidden' onChange={(e) => {
+                                    uploadProfilePicture(e.target.files[0])
+                                }} />
+
+                                <button onClick={() => {
+                                    uploadRef.current.click()
+                                }} className="flex items-center bg-blue-600 hover:bg-blue-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                                    </svg>
+                                    <span>Image</span>
+                                </button>
+                                <button onClick={() => {
+                                    openEditProfile()
+                                }} className="flex items-center bg-blue-600 hover:bg-blue-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clipRule="evenodd"></path>
+                                    </svg>
+                                    <span>Edit Profile</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="flex-1 flex flex-col items-center lg:items-end justify-end px-8 mt-2">
-                    <div className="flex items-center space-x-4 mt-2">
-                        {
-                            (profileDetails?.role?.includes('super-admin') || profileDetails?.role?.includes('admin') || userDetails?.role?.includes('admin') || userDetails?.role?.includes('super-admin')) &&
-
-                            <Link to={'/dashboard'} className='flex items-center bg-green-800 hover:bg-green-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100'>
-                                Dashboard
-                            </Link>
-                        }
-                        <input ref={uploadRef} type='file' className='hidden' onChange={(e) => {
-                            uploadProfilePicture(e.target.files[0])
-                        }} />
-
-                        <button onClick={() => {
-                            uploadRef.current.click()
-                        }} className="flex items-center bg-blue-600 hover:bg-blue-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
-                            </svg>
-                            <span>Image</span>
-                        </button>
-                        <button onClick={() => {
-                            openEditProfile()
-                        }} className="flex items-center bg-blue-600 hover:bg-blue-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clipRule="evenodd"></path>
-                            </svg>
-                            <span>Edit Profile</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className='bg-white p-5 my-5 rounded-lg shadow-xl'>
-                <div className="px-4 sm:px-0">
-                    <h3 className="text-base font-semibold leading-7 text-gray-900">User Information</h3>
-                    <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details.</p>
-                </div>
-                <div className="mt-6 border-t border-gray-100">
-                    <dl className="divide-y divide-gray-100">
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt className="text-sm font-medium leading-6 text-gray-900">Full name</dt>
-                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{profileDetails?.firstname} {profileDetails?.lastname}</dd>
+                    <div className='bg-white p-5 my-5 rounded-lg shadow-xl'>
+                        <div className="px-4 sm:px-0">
+                            <h3 className="text-base font-semibold leading-7 text-gray-900">User Information</h3>
+                            <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details.</p>
                         </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt className="text-sm font-medium leading-6 text-gray-900">Contact</dt>
-                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{profileDetails?.contact}</dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt className="text-sm font-medium leading-6 text-gray-900">Email address</dt>
-                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{profileDetails?.email}</dd>
-                        </div>
-                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
-                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                {profileDetails?.address}
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
-            <div className='bg-white p-5 my-5 rounded-lg shadow-xl'>
-                <div className="px-4 sm:px-0">
-                    <h3 className="text-base font-semibold leading-7 text-gray-900">My Bookings</h3>
-                    <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Your Bookings Details</p>
-                </div>
-                <div className="mt-6 border-t border-gray-100">
-                    <div className="divide-y divide-gray-100 grid grid-cols-4">
-                        {
-                            bookingData?.map((value, index) => (
-                                <div class="block max-w-sm p-6 mt-4 bg-blue-50 bg-opacity-30 border  rounded-lg  hover:bg-gray-100 ">
-                                    <div className='flex justify-between gap-3'>
-                                        <h5 class="mb-2 font-bold tracking-tight -ml-1 -mt-2 bg-green-600 text-white w-fit p-4 py-1.5 rounded-full capitalize">{value?.lesson_type} </h5>
-                                    </div>
-                                    <h5 class="mb-2 text-xl mt-3 font-bold tracking-tight text-gray-900 "> {value?.lesson?.title}</h5>
-                                    <p class="font-semibold text-gray-700 capitalize">{value?.lesson_name} </p>
-                                    <p class="font-normal text-gray-700 "> Payment: {value?.is_payed === true ? "Successfull" : "Failed"}</p>
-                                    <p class="font-normal text-gray-700 "> AUD {value?.price}</p>
+                        <div className="mt-6 border-t border-gray-100">
+                            <dl className="divide-y divide-gray-100">
+                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Full name</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{profileDetails?.firstname} {profileDetails?.lastname}</dd>
                                 </div>
-                            ))
-                        }
-
+                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Contact</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{profileDetails?.contact}</dd>
+                                </div>
+                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Email address</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{profileDetails?.email}</dd>
+                                </div>
+                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                                        {profileDetails?.address}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
                     </div>
+                    <div className='bg-white p-5 my-5 rounded-lg shadow-xl'>
+                        <div className="px-4 sm:px-0">
+                            <h3 className="text-base font-semibold leading-7 text-gray-900">My Bookings</h3>
+                            <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Your Bookings Details</p>
+                        </div>
+                        <div className="mt-6 border-t border-gray-100">
+                            <div className="divide-y divide-gray-100 grid grid-cols-4">
+                                {
+                                    bookingData?.map((value, index) => (
+                                        <div class="block max-w-sm p-6 mt-4 bg-blue-50 bg-opacity-30 border  rounded-lg  hover:bg-gray-100 ">
+                                            <div className='flex justify-between gap-3'>
+                                                <h5 class="mb-2 font-bold tracking-tight -ml-1 -mt-2 bg-green-600 text-white w-fit p-4 py-1.5 rounded-full capitalize">{value?.lesson_type} </h5>
+                                            </div>
+                                            <h5 class="mb-2 text-xl mt-3 font-bold tracking-tight text-gray-900 "> {value?.lesson?.title}</h5>
+                                            <p class="font-semibold text-gray-700 capitalize">{value?.lesson_name} </p>
+                                            <p class="font-normal text-gray-700 "> Payment: {value?.is_payed === true ? "Successfull" : "Failed"}</p>
+                                            <p class="font-normal text-gray-700 "> AUD {value?.price}</p>
+                                        </div>
+                                    ))
+                                }
+
+                            </div>
+                        </div>
+                    </div> */}
                 </div>
             </div>
-
-            {/* <Notices /> */}
-            {/* <div className='bg-white p-5 my-5 rounded-lg shadow-xl'>
-                <div className="px-4 sm:px-0">
-                    <h3 className="text-base font-semibold leading-7 text-gray-900">My Notices</h3>
-                    <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500"></p>
-                </div>
-                <div className="mt-6 border-t border-gray-100">
-                    <dl className="divide-y divide-gray-100">
-                        {
-                            notices?.map((value, index) => (
-                                <div key={index} className="px-4 py-6 grid sm:px-0">
-                                    <div className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center gap-3"><CgAlarm /> <span className='semibold'>{dayjs(value?.updatedAt).format('D MMM YYYY')}</span> </div>
-                                    <span className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center gap-3">Event Recommendation</span>
-                                    <Link to={'/events'} className=' capitalize font-medium leading-6 text-gray-900 '>{value?.message}</Link>
-                                </div>
-                            ))
-                        }
-
-                    </dl>
-                </div>
-            </div> */}
 
 
         </div >

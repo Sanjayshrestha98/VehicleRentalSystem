@@ -48,17 +48,18 @@ function EditProfile({ modalIsOpen, closeModal, getRoute, profileDetails }) {
 
 
     return (
-        <Modal
-            ariaHideApp={false}
-            isOpen={modalIsOpen}
-            onRequestClose={closeModal}
-            contentLabel="Add Category Modal"
-            overlayClassName="Overlay"
-            className="Modal rounded-md p-5 md:w-1/4 max-h-screen overflow-auto"
-        >
+        // <Modal
+        //     ariaHideApp={false}
+        //     isOpen={modalIsOpen}
+        //     onRequestClose={closeModal}
+        //     contentLabel="Add Category Modal"
+        //     overlayClassName="Overlay"
+        //     className="Modal rounded-md p-5 md:w-1/4 max-h-screen overflow-auto"
+        // >
+        <div className='bg-white px-10 p-4 rounded-lg'>
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <h2 className="mt-5 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Change Profile Details
+                    Profile Details
                 </h2>
             </div>
 
@@ -172,11 +173,11 @@ function EditProfile({ modalIsOpen, closeModal, getRoute, profileDetails }) {
                             <div className='col-span-full mt-4 flex gap-3'>
                                 <button
                                     type="submit"
-                                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 px-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5  text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
                                     Submit
                                 </button>
-                                <button
+                                {/* <button
                                     onClick={() => {
                                         closeModal()
                                     }}
@@ -184,7 +185,7 @@ function EditProfile({ modalIsOpen, closeModal, getRoute, profileDetails }) {
                                     className="flex w-full justify-center rounded-md bg-gray-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
                                     Close
-                                </button>
+                                </button> */}
                             </div>
 
 
@@ -193,8 +194,9 @@ function EditProfile({ modalIsOpen, closeModal, getRoute, profileDetails }) {
                 </Formik>
 
             </div>
+        </div>
 
-        </Modal>
+        // </Modal>
     )
 }
 
