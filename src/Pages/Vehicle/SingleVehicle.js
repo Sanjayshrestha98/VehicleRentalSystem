@@ -1,14 +1,17 @@
 import axios from '../../axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { BiSolidStar, BiStar } from 'react-icons/bi'
 import { CiCircleCheck } from 'react-icons/ci'
 import Rating from 'react-rating'
 import { useParams } from 'react-router-dom'
+import { AuthContext } from '../../context/authContext';
+import { Field, Form, Formik } from 'formik'
 
 function SingleVehicle() {
 
     const { sku } = useParams()
+    const { isAuthenticated } = useContext(AuthContext)
     const [selectedImage, setSelectedImage] = useState();
     const [show2, setShow2] = useState(false);
     const [vehicleData, setVehicleData] = useState()
@@ -48,6 +51,33 @@ function SingleVehicle() {
         scrollToTop()
     }, [])
 
+    const bookVehicle = async (_id) => {
+        try {
+            let result = await axios.post('/bookings/create-intent', {
+                vehicle: vehicleData?._id,
+            })
+
+            if (result.data.success) {
+                console.log('Hello')
+            } else toast.error('Failed')
+        } catch (ERR) {
+            toast.error('Failed')
+        }
+    }
+
+    const addReview = async (values, actions) => {
+        try {
+            let result = await axios.post('/review/', values)
+
+            if (result.data.success) {
+                console.log('Hello')
+            } else toast.error('Failed')
+        } catch (ERR) {
+            toast.error('Failed')
+        }
+    }
+
+
     return (
         <div className="md:flex items-start justify-center py-12 2xl:px-20 md:px-6 px-4 container mx-auto">
 
@@ -60,7 +90,50 @@ function SingleVehicle() {
                         }} alt={vehicleData?.name} className={`md:w-48 md:h-48 h-20 w-full object-contain border-2 ${selectedImage === img ? "border-blue-600 shadow" : "border-gray-200"}`} src={`${process.env.REACT_APP_IMG_URI}${img}`} />
                     ))}
                 </div>
+                <Formik
+                    enableReinitialize
+                    initialValues={{
+                        name: "",
+                        email: "",
+                        message: ""
+                    }}
+                    onSubmit={(values, actions) => {
+                        addReview(values, actions);
+                    }}
+                    className='mt-10'>
+                    {(props) => (
+                        <Form >
+                            <h2 className='font-semibold text-lg mt-10'>Add a Review</h2>
+                            <p className='my-3 mb-10'>Your email address will not be published. Required fields are marked <b className='text-red-600'>*</b></p>
+
+                            <div className='my-3'>
+                                <Rating initialRating={0} step={1} fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} />
+                            </div>
+
+                            <div className='grid grid-cols-2 gap-3'>
+                                <div className=''>
+                                    <label>Name <b className='text-red-600'>*</b></label>
+                                    <Field name="name" className='inputfield mt-2' />
+                                </div>
+                                <div className=''>
+                                    <label>Email <b className='text-red-600'>*</b></label>
+                                    <Field name="email" className='inputfield mt-2' type="email" />
+                                </div>
+                                <div className='col-span-full'>
+                                    <label>Your Review <b className='text-red-600'>*</b></label>
+                                    <Field as="textarea" name="message" className='inputfield mt-2' />
+                                </div>
+
+                                <button className='btn-primary' type='submit'>
+                                    Submit
+                                </button>
+                            </div>
+                        </Form>
+                    )}
+
+                </Formik>
             </div>
+
             <div className=" md:w-1/2 lg:ml-8 md:ml-6 md:mt-0 mt-6">
                 <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} />
 
@@ -152,15 +225,22 @@ function SingleVehicle() {
                     <p className="text-lg leading-none font-semibold">Rental Policy</p>
 
                     <ul className='mt-4 pl-2'>
-
                         <li className='text-gray-600 mb-2'><b>Pay only 15% now,</b> and the rest at the destination.</li>
                         <li className='text-gray-600 mb-2'>Cancel up-to <b>48 hours before pick-up</b> and get a full refund.</li>
                         <li className='text-gray-600 mb-2'>This vehicle requires a licence category <b>A1,</b> or equivalent.</li>
                         <li className='text-gray-600 mb-2'>You’ll need to be at least <b>18 years old</b> to rent it with 12 months driving experience.</li>
                         <li className='text-gray-600 mb-2'>A <b>refundable</b> security-deposit is required ( 24 € debit-card, ) on pickup.</li>
                         <li className='text-gray-600 mb-2'>This car includes <b>unlimited mileage </b> per day in the price.</li>
-
                     </ul>
+                </div>
+
+                <div>
+                    {
+                        isAuthenticated &&
+                        <button className='btn-primary' onClick={() => {
+                            bookVehicle()
+                        }}>Book Now</button>
+                    }
                 </div>
             </div>
         </div>
