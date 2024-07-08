@@ -27,7 +27,7 @@ function Login() {
 
         setTimeout(() => {
           setIsAuthenticated(true)
-          // if (response.data.data.role.includes('admin') || response.data.data.role.includes('super-admin')) {
+          // if (response.data.data.role.includes('admin') || response.data.data.role.includes('superadmin')) {
           //   navigate('/dashboard')
           // } else navigate('/')
           navigate('/')
@@ -37,7 +37,7 @@ function Login() {
     } catch (error) {
       // Handle errors (e.g., show an error message)
       console.error('Error submitting form:', error);
-      toast.error(error?.response?.data?.message ? error?.response?.data?.message : "Failed To Login")
+      toast.error(error?.response?.data?.msg ? error?.response?.data?.msg : "Failed To Login")
     }
   };
 

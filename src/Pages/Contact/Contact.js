@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import axios from '../../axios'
 import { Field, Form, Formik } from 'formik'
 import toast from 'react-hot-toast'
@@ -7,8 +8,11 @@ import { HiPhone } from 'react-icons/hi'
 
 function Contact() {
 
+    const [expandedIndex, setExpandedIndex] = useState(null)
+
     const handleFormSubmit = async (values, actions) => {
         try {
+
             let result = await axios.post('/contact', values)
 
             if (result.data.success) {
@@ -19,9 +23,10 @@ function Contact() {
             } else toast.error('Failed')
         } catch (ERR) {
             console.log(ERR)
-            toast.error(ERR.response.data.message)
+            toast.error(ERR.response.data.msg)
         }
     }
+
 
     return (
         <>
@@ -38,51 +43,32 @@ function Contact() {
                     <Formik
                         enableReinitialize
                         initialValues={{
-
-                            fullname: "",
+                            name: "",
                             email: "",
                             mobile_no: "",
                             message: "",
                         }}
                         onSubmit={(values, actions) => {
-
-                            const newvalues = values
-                            newvalues.fullname = `${values.firstname} ${values.lastname}`
-
-                            handleFormSubmit(newvalues, actions);
+                            handleFormSubmit(values, actions);
                         }}>
 
                         {
                             (props) => (
-
                                 <Form className="mx-auto max-w-xl  ">
                                     <p className='mb-10'>Contact us about anything related to our company or services. We’ll do our best to get back to you as soon as possible.</p>
 
                                     <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                                        <div>
-                                            <label htmlFor="firstname" className="block text-sm font-semibold leading-6 text-gray-900">
-                                                First name
+                                        <div className='col-span-full'>
+                                            <label htmlFor="name" className="block text-sm font-semibold leading-6 text-gray-900">
+                                                Name
                                             </label>
                                             <div className="mt-2.5">
                                                 <Field
+                                                    required
                                                     type="text"
-                                                    name="firstname"
-                                                    id="firstname"
+                                                    name="name"
+                                                    id="name"
                                                     autoComplete="given-name"
-                                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label htmlFor="lastname" className="block text-sm font-semibold leading-6 text-gray-900">
-                                                Last name
-                                            </label>
-                                            <div className="mt-2.5">
-                                                <Field
-                                                    type="text"
-                                                    name="lastname"
-                                                    id="lastname"
-                                                    autoComplete="family-name"
                                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                                 />
                                             </div>
@@ -94,6 +80,7 @@ function Contact() {
                                             </label>
                                             <div className="mt-2.5">
                                                 <Field
+                                                    required
                                                     type="email"
                                                     name="email"
                                                     id="email"
@@ -121,6 +108,7 @@ function Contact() {
                                                     </p>
                                                 </div>
                                                 <Field
+                                                    required
                                                     type="tel"
                                                     name="mobile_no"
                                                     id="mobile_no"
@@ -135,6 +123,7 @@ function Contact() {
                                             </label>
                                             <div className="mt-2.5">
                                                 <Field
+                                                    required
                                                     as="textarea"
                                                     name="message"
                                                     id="message"
@@ -171,6 +160,189 @@ function Contact() {
                 </div>
 
             </div>
+
+            <section className="py-24">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mb-16">
+                        <h6 className="text-lg text-indigo-600 font-medium text-center mb-2">
+                            FAQs
+                        </h6>
+                        <h2
+                            className="text-4xl font-manrope text-center font-bold text-gray-900 leading-[3.25rem]"
+                        >
+                            Frequently asked questions
+                        </h2>
+                    </div>
+
+                    <div className="accordion-group" data-accordion="default-accordion">
+                        <div
+                            className="accordion py-8 px-6 border-b border-solid border-gray-200 transition-all duration-500 rounded-2xl hover:bg-indigo-50 accordion-active:bg-indigo-50 active"
+                            id="basic-heading-one-with-arrow"
+                        >
+                            <button
+                                onClick={() => {
+                                    setExpandedIndex(0)
+                                }}
+                                className="accordion-toggle group inline-flex items-center justify-between leading-8 text-gray-900 w-full transition duration-500 text-left hover:text-indigo-600 accordion-active:font-medium "
+                                aria-controls="basic-collapse-one-with-arrow"
+                            >
+                                <h5>How do I update my billing information?</h5>
+                                <svg
+                                    className={`text-gray-500 transition duration-500 group-hover:text-indigo-600   ${expandedIndex === 0 ? "rotate-180" : ""}`}
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 22 22"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M16.5 8.25L12.4142 12.3358C11.7475 13.0025 11.4142 13.3358 11 13.3358C10.5858 13.3358 10.2525 13.0025 9.58579 12.3358L5.5 8.25"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    ></path>
+                                </svg>
+                            </button>
+                            <div
+                                id="basic-collapse-one-with-arrow"
+                                className={`w-full px-0 overflow-hidden ${expandedIndex === 0 ? "" : "h-0"} ease-in`}
+                                aria-labelledby="basic-heading-one-with-arrow"
+                            >
+                                <p className="text-base text-gray-900 leading-6">
+                                    To contact customer support, look for a 'Contact us' or 'Help'
+                                    button or link on the website or platform. You may be able to
+                                    email, call, or chat with customer support for assistance.
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            className="accordion py-8 px-6 border-b border-solid border-gray-200 transition-all duration-500 rounded-2xl hover:bg-indigo-50 accordion-active:bg-indigo-50"
+                            id="basic-heading-two-with-arrow"
+                        >
+                            <button
+                                onClick={() => {
+                                    setExpandedIndex(1)
+                                }}
+                                className="accordion-toggle group inline-flex items-center justify-between leading-8 text-gray-900 w-full transition duration-500 text-left hover:text-indigo-600 "
+                                aria-controls="basic-collapse-two-with-arrow"
+                            >
+                                <h5>How can I contact customer support?</h5>
+                                <svg
+                                    className={`text-gray-500 transition duration-500 group-hover:text-indigo-600   ${expandedIndex === 1 ? "rotate-180" : ""}`}
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 22 22"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M16.5 8.25L12.4142 12.3358C11.7475 13.0025 11.4142 13.3358 11 13.3358C10.5858 13.3358 10.2525 13.0025 9.58579 12.3358L5.5 8.25"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    ></path>
+                                </svg>
+                            </button>
+                            <div
+                                id="basic-collapse-two-with-arrow"
+                                className={`w-full px-0 overflow-hidden ${expandedIndex === 1 ? "" : "h-0"} ease-in`}
+                                aria-labelledby="basic-heading-two-with-arrow"
+                            >
+                                <p className="text-base text-gray-900 leading-6">
+                                    To contact customer support, look for a 'Contact us' or 'Help'
+                                    button or link on the website or platform. You may be able to
+                                    email, call, or chat with customer support for assistance.
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            className="accordion py-8 px-6 border-b border-solid border-gray-200 transition-all duration-500 rounded-2xl hover:bg-indigo-50 accordion-active:bg-indigo-50"
+                            id="basic-heading-three-with-arrow"
+                        >
+                            <button
+                                onClick={() => {
+                                    setExpandedIndex(2)
+                                }}
+                                className="accordion-toggle group inline-flex items-center justify-between leading-8 text-gray-900 w-full transition duration-500 text-left hover:text-indigo-600 "
+                                aria-controls="basic-collapse-three-with-arrow"
+                            >
+                                <h5>How do I update my profile information?</h5>
+                                <svg
+                                    className={`text-gray-500 transition duration-500 group-hover:text-indigo-600   ${expandedIndex === 2 ? "rotate-180" : ""}`}
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 22 22"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M16.5 8.25L12.4142 12.3358C11.7475 13.0025 11.4142 13.3358 11 13.3358C10.5858 13.3358 10.2525 13.0025 9.58579 12.3358L5.5 8.25"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    ></path>
+                                </svg>
+                            </button>
+                            <div
+                                id="basic-collapse-three-with-arrow"
+                                className={`w-full px-0 overflow-hidden ${expandedIndex === 2 ? "" : "h-0"} ease-in`}
+                                aria-labelledby="basic-heading-three-with-arrow"
+                            >
+                                <p className="text-base text-gray-900 leading-6">
+                                    To contact customer support, look for a 'Contact us' or 'Help'
+                                    button or link on the website or platform. You may be able to
+                                    email, call, or chat with customer support for assistance.
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            className="accordion py-8 px-6 transition-all duration-500 rounded-2xl hover:bg-indigo-50 accordion-active:bg-indigo-50"
+                            id="basic-heading-three-with-arrow"
+                        >
+                            <button
+                                onClick={() => {
+                                    setExpandedIndex(3)
+                                }}
+                                className="accordion-toggle group inline-flex items-center justify-between leading-8 text-gray-900 w-full transition duration-500 text-left hover:text-indigo-600 "
+                                aria-controls="basic-collapse-three-with-arrow"
+                            >
+                                <h5>How do I find my purchase history?</h5>
+                                <svg
+                                    className={`text-gray-500 transition duration-500 group-hover:text-indigo-600   ${expandedIndex === 3 ? "rotate-180" : ""}`}
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 22 22"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M16.5 8.25L12.4142 12.3358C11.7475 13.0025 11.4142 13.3358 11 13.3358C10.5858 13.3358 10.2525 13.0025 9.58579 12.3358L5.5 8.25"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    ></path>
+                                </svg>
+                            </button>
+                            <div
+                                id="basic-collapse-three-with-arrow"
+                                className={`w-full px-0 overflow-hidden ${expandedIndex === 3 ? "" : "h-0"} ease-in`}
+                                aria-labelledby="basic-heading-three-with-arrow"
+                            >
+                                <p className="text-base text-gray-900 leading-6">
+                                    To contact customer support, look for a 'Contact us' or 'Help'
+                                    button or link on the website or platform. You may be able to
+                                    email, call, or chat with customer support for assistance.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </>
     )
 }

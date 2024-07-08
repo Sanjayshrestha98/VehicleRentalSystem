@@ -29,7 +29,7 @@ function VehicleLog({ modalIsOpen, closeModal, getRoute, data }) {
             } else toast.error('Failed')
         } catch (ERR) {
             console.log(ERR)
-            toast.error(ERR.response.data.message)
+            toast.error(ERR.response.data.msg)
         }
     }
 
@@ -45,7 +45,7 @@ function VehicleLog({ modalIsOpen, closeModal, getRoute, data }) {
             } else toast.error('Failed')
         } catch (ERR) {
             console.log(ERR)
-            toast.error(ERR.response.data.message)
+            toast.error(ERR.response.data.msg)
         }
     }
 
@@ -61,7 +61,7 @@ function VehicleLog({ modalIsOpen, closeModal, getRoute, data }) {
             } else toast.error('Failed')
         } catch (ERR) {
             console.log(ERR)
-            toast.error(ERR.response.data.message)
+            toast.error(ERR.response.data.msg)
         }
     }
 

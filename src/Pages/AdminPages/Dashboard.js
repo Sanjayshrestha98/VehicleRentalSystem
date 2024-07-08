@@ -29,7 +29,7 @@ function Dashboard() {
   //     } else toast.error('Failed')
   //   } catch (ERR) {
   //     console.log(ERR)
-  //     // toast.error(ERR.response.data.message)
+  //     // toast.error(ERR.response.data.msg)
   //   }
   // }
 
@@ -49,7 +49,7 @@ function Dashboard() {
 
   //   } catch (ERR) {
   //     console.log(ERR)
-  //     // toast.error(ERR.response.data.message)
+  //     // toast.error(ERR.response.data.msg)
   //   }
   // }
 
@@ -69,7 +69,7 @@ function Dashboard() {
   //     } else toast.error('Failed')
   //   } catch (ERR) {
   //     console.log(ERR)
-  //     // toast.error(ERR.response.data.message)
+  //     // toast.error(ERR.response.data.msg)
   //   }
   // }
 
@@ -88,7 +88,7 @@ function Dashboard() {
   //     } else toast.error('Failed')
   //   } catch (ERR) {
   //     console.log(ERR)
-  //     // toast.error(ERR.response.data.message)
+  //     // toast.error(ERR.response.data.msg)
   //   }
   // }
 

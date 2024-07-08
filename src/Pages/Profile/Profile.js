@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { CgAlarm } from 'react-icons/cg'
 import dayjs from 'dayjs'
 import ConfirmPassword from './ConfirmPassword'
+import { BiLinkExternal } from 'react-icons/bi'
 
 function Profile() {
     const { userDetails, setUserDetails } = useContext(AuthContext)
@@ -104,7 +105,7 @@ function Profile() {
                     return <div>tab 4</div>
             }
         } catch (ERR) {
-
+            console.log(ERR)
         }
     }
 
@@ -115,6 +116,12 @@ function Profile() {
             <div className='grid grid-cols-8 gap-5'>
                 <div className=' col-span-2 rounded-lg border bg-white'>
                     <ul className='space-y-3 p-6'>
+                        {
+                            userDetails.role.includes('superadmin') &&
+                            <li className='   '>
+                                <Link to={'/dashboard'} className={`w-full flex items-center gap-2 bg-blue-200  p-4 border border-transparent rounded-lg `}> Go To Dashboard  <BiLinkExternal /> </Link>
+                            </li>
+                        }
                         <li onClick={() => {
                             setTab(1)
                         }} className={`${tab === 1 ? "bg-gray-200" : "bg-white"} p-4 border border-transparent rounded-lg cursor-pointer `}><p>Profile Settings</p><p className='text-xs'>Edit Personal Information and Login Credentials</p></li>

@@ -92,7 +92,7 @@ function BecomeAHost() {
             } else toast.error("Failed");
         } catch (ERR) {
             console.log(ERR);
-            toast.error(ERR.response.data.message);
+            toast.error(ERR.response.data.msg);
         }
     }
 
@@ -121,7 +121,7 @@ function BecomeAHost() {
             });
         } catch (ERR) {
             console.log(ERR);
-            toast.error(ERR.response.data.message);
+            toast.error(ERR.response.data.msg);
         }
     };
 
@@ -156,7 +156,7 @@ function BecomeAHost() {
         } catch (error) {
             setTimeout(() => {
                 setIsLoading(false)
-                toast.error(error.response.data.message)
+                toast.error(error.response.data.msg)
             }, 500)
             console.log(error)
         }
@@ -190,6 +190,8 @@ function BecomeAHost() {
             <div className='max-w-7xl mx-auto py-10 px-5 mb-10'>
                 <h1 className='lg:text-5xl text-4xl font-bold text-center '>Add Your Vehicles To Rent</h1>
             </div>
+
+
 
             <div className='flex flex-row-reverse'>
                 <button onClick={() => {

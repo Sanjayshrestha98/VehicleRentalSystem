@@ -19,7 +19,7 @@ function AddUser({ modalIsOpen, closeModal, getRoute }) {
             } else toast.error('Failed')
         } catch (ERR) {
             console.log(ERR)
-            toast.error(ERR.response.data.message)
+            toast.error(ERR.response.data.msg)
         }
     }
 
@@ -58,7 +58,7 @@ function AddUser({ modalIsOpen, closeModal, getRoute }) {
                         contact: "",
                         address: "",
                         password: "password",
-                        // role:'super-admin',
+                        // role:'superadmin',
                     }}
                     validationSchema={validationSchema}
                     onSubmit={(values, actions) => {

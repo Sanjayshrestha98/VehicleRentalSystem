@@ -15,7 +15,7 @@ const navigation = [
   // { name: 'users', href: '/dashboard/users' },
   { name: 'vehicle', href: '/dashboard/vehicle' },
   // { name: 'events', href: '/dashboard/events' },
-  // { name: 'contact', href: '/dashboard/contact' },
+  { name: 'contact', href: '/dashboard/contact' },
   // { name: 'blog', href: '/dashboard/blog' },
   // { name: 'sessions', href: '/dashboard/sessions' },
 ]

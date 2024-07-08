@@ -1,22 +1,34 @@
 import axios from '../../axios'
 import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { BiSolidStar, BiStar } from 'react-icons/bi'
+import { BiLoader, BiSolidStar, BiStar } from 'react-icons/bi'
 import { CiCircleCheck } from 'react-icons/ci'
 import Rating from 'react-rating'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext';
 import { Field, Form, Formik } from 'formik'
+import { loadStripe } from '@stripe/stripe-js'
+import Modal from 'react-modal'
 
 function SingleVehicle() {
+    const [isLoading, setIsLoading] = useState(false)
 
     const { sku } = useParams()
     const { isAuthenticated } = useContext(AuthContext)
     const [selectedImage, setSelectedImage] = useState();
+
+    const [isAgree, setIsAgree] = useState(false);
+
     const [show2, setShow2] = useState(false);
     const [vehicleData, setVehicleData] = useState()
+    const [modalIsOpen, setModalIsOpen] = useState(false)
 
-    console.log('vehicleData', vehicleData)
+    const [packageList, setPackageList] = useState()
+
+    const closeModal = () => {
+        setModalIsOpen(false)
+        setPackageList(undefined)
+    }
 
     const includedInPrice = [
         "Map",
@@ -35,7 +47,7 @@ function SingleVehicle() {
             } else toast.error('Failed')
         } catch (ERR) {
             console.log(ERR)
-            toast.error(ERR.response.data.message)
+            toast.error(ERR.response.data.msg)
         }
     }
 
@@ -51,17 +63,60 @@ function SingleVehicle() {
         scrollToTop()
     }, [])
 
-    const bookVehicle = async (_id) => {
-        try {
-            let result = await axios.post('/bookings/create-intent', {
-                vehicle: vehicleData?._id,
-            })
 
-            if (result.data.success) {
-                console.log('Hello')
-            } else toast.error('Failed')
-        } catch (ERR) {
-            toast.error('Failed')
+    const makePayment = async (value, type) => {
+        try {
+
+            setIsLoading(true)
+            const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PL)
+
+            let totalDays = 0
+
+            const pickupDate = value?.pickup_date ? new Date(value.pickup_date) : null;
+            const dropDate = value?.drop_date ? new Date(value.drop_date) : null;
+
+            if (pickupDate && dropDate && !isNaN(pickupDate) && !isNaN(dropDate)) {
+                const timeDifference = dropDate - pickupDate;
+                const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
+                totalDays = (Math.ceil(dayDifference) + 1);
+            } else {
+                console.log("Invalid dates");
+            }
+
+            console.log(totalDays)
+
+            const body = {
+                vehicle: vehicleData?._id,
+                price: vehicleData?.price * totalDays,
+                pickup_date: value?.pickup_date,
+                drop_date: value?.drop_date,
+                address: value?.address,
+                contact: value?.contact,
+            }
+
+            const response = await axios.post(`${process.env.REACT_APP_BASE_URI}booking/create-intent`, body)
+
+            // const result = stripe.redirectToCheckout({
+            //     vehicleId: response.data.id
+            // })
+
+            console.log('result', response.data.url)
+            if (response.data.url) {
+                window.location.href = response.data.url
+            }
+
+            // if ((await result).error) {
+            //     setTimeout(() => {
+            //         setIsLoading(false)
+            //     }, 500)
+            //     console.log((await result).error)
+            // }
+        } catch (error) {
+            setTimeout(() => {
+                setIsLoading(false)
+                toast.error(error.response.data.msg)
+            }, 500)
+            console.log(error)
         }
     }
 
@@ -80,6 +135,106 @@ function SingleVehicle() {
 
     return (
         <div className="md:flex items-start justify-center py-12 2xl:px-20 md:px-6 px-4 container mx-auto">
+            {
+                isLoading &&
+                <div className='fixed h-screen top-0 w-full bg-black bg-opacity-65 z-[999999] grid place-items-center'>
+                    <label className='flex items-center gap-3 font-semibold text-white'><BiLoader className='animate-spin' /> Loading... </label>
+                </div>
+            }
+
+            <Modal
+                ariaHideApp={false}
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Choose Option"
+                overlayClassName="Overlay"
+                className="Modal rounded-md p-10 max-w-xl max-h-screen overflow-auto"
+            >
+
+                <div>
+                    <h2 className='text-xl uppercase text-center mt-5 font-semibold opacity-70'>{vehicleData?.name}</h2>
+                    <p className='font-semibold text-center mb-10 mt-2'>Fill the Details below to book the vehicle</p>
+                </div>
+
+                <div className='grid gap-2 mt-4'>
+
+                    <Formik
+                        enableReinitialize
+                        initialValues={{
+                            // name: "",
+                            pickup_date: "",
+                            drop_date: "",
+                            address: "",
+                            contact: ""
+                        }}
+                        onSubmit={(values, actions) => {
+                            makePayment(values, actions);
+                        }}
+                        className='mt-10'>
+                        {(props) => (
+                            <Form >
+                                <div className='grid grid-cols-2 gap-3'>
+                                    {/* <div className='col-span-full'>
+                                        <label>Name</label>
+                                        <Field name="name" className='inputfield mt-2' />
+                                    </div> */}
+                                    <div className=''>
+                                        <label>Pick Date</label>
+                                        <Field name="pickup_date" className='inputfield mt-2' type="datetime-local" />
+                                    </div>
+                                    <div className=''>
+                                        <label>Drop Date</label>
+                                        <Field name="drop_date" className='inputfield mt-2' type="datetime-local" />
+                                    </div>
+                                    <div className='col-span-full'>
+                                        <label>Address</label>
+                                        <Field name="address" className='inputfield mt-2' />
+                                    </div>
+                                    <div className='col-span-full'>
+                                        <label>Contact</label>
+                                        <Field name="contact" className='inputfield mt-2' type="string" />
+                                    </div>
+
+                                    <div className='col-span-full my-5'>
+                                        <label className='flex gap-3'>
+                                            <input type='checkbox' checked={isAgree} onChange={(e) => {
+                                                setIsAgree(e.target.checked)
+                                            }} />
+                                            Note: If changes in pick up and drop dates needs to be done, you should contact the admin before 24 hrs.
+                                        </label>
+                                    </div>
+                                </div>
+                                <button className='btn-primary w-full' type='submit' disabled={!isAgree}>
+                                    Submit
+                                </button>
+                            </Form>
+                        )}
+
+                    </Formik>
+                    {/* {
+                        packageList?.price.map((value, index) => (
+                            <div className='py-3 '>
+                                <p className='font-semibold' key={index}>{value?.name}</p>
+                                <div className='flex items-center gap-3 mt-1'>
+                                    <div className='flex  hover:bg-blue-300 w-fit p-2 border border-blue-100 rounded ' role='button' onClick={() => {
+                                        makePayment(value, "private")
+                                    }}>
+                                        <label>Private - </label>
+                                        <p className='' key={index}> $ {value?.private}</p>
+                                    </div>
+                                    <div className='flex  hover:bg-blue-300 w-fit p-2 border rounded border-blue-100' role='button' onClick={() => {
+                                        makePayment(value, "group")
+                                    }}>
+                                        <label>Group - </label>
+                                        <p className='' key={index}> $ {value?.group}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    } */}
+                </div>
+            </Modal>
+
 
             <div className="md:w-1/2">
                 <img className="w-full md:h-96 h-72 object-contain" alt={vehicleData?.name} src={`${process.env.REACT_APP_IMG_URI}${selectedImage}`} />
@@ -113,15 +268,15 @@ function SingleVehicle() {
                             <div className='grid grid-cols-2 gap-3'>
                                 <div className=''>
                                     <label>Name <b className='text-red-600'>*</b></label>
-                                    <Field name="name" className='inputfield mt-2' />
+                                    <Field required name="name" className='inputfield mt-2' />
                                 </div>
                                 <div className=''>
                                     <label>Email <b className='text-red-600'>*</b></label>
-                                    <Field name="email" className='inputfield mt-2' type="email" />
+                                    <Field required name="email" className='inputfield mt-2' type="email" />
                                 </div>
                                 <div className='col-span-full'>
                                     <label>Your Review <b className='text-red-600'>*</b></label>
-                                    <Field as="textarea" name="message" className='inputfield mt-2' />
+                                    <Field required as="textarea" name="message" className='inputfield mt-2' />
                                 </div>
 
                                 <button className='btn-primary' type='submit'>
@@ -238,7 +393,8 @@ function SingleVehicle() {
                     {
                         isAuthenticated &&
                         <button className='btn-primary' onClick={() => {
-                            bookVehicle()
+                            setModalIsOpen(true)
+                            setPackageList(vehicleData)
                         }}>Book Now</button>
                     }
                 </div>

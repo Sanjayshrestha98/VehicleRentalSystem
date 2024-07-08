@@ -26,13 +26,13 @@ function AdminContact() {
         })
 
         if (result.data.success) {
-          setContactData(result?.data?.data.data)
-          setTotalContactCount(result?.data?.data?.count)
-          setTotalContactPage(result?.data?.data?.totalPage)
+          setContactData(result?.data?.data)
+          setTotalContactCount(result?.data?.totalCount)
+          setTotalContactPage(Number(result?.data?.page))
         } else toast.error('Failed')
       } catch (ERR) {
         console.log(ERR)
-        toast.error(ERR.response.data.message)
+        toast.error(ERR.response.data.msg)
       }
     }
     getAllContact()
@@ -71,7 +71,7 @@ function AdminContact() {
                 contactData?.map((value, index) => (
                   <tr key={index} className='border-b'>
                     <td className='p-3'>{index + 1}</td>
-                    <td className='p-3'>{value?.fullname}</td>
+                    <td className='p-3'>{value?.name}</td>
                     <td className='p-3'>{value?.mobile_no}</td>
                     <td className='p-3'>{value?.email}</td>
                     <td className='p-3'>{value?.message}</td>

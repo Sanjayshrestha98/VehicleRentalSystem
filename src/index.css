@@ -11,6 +11,9 @@
   .btn-dark {
     @apply bg-black text-center justify-center p-3 px-6 rounded text-white mt-4 flex gap-6 items-center hover:bg-opacity-80;
   }
+  .btn-outline {
+    @apply bg-white text-center justify-center p-3 px-6 rounded text-black mt-4 flex gap-6 items-center hover:bg-opacity-80 border-2;
+  }
   .btn-danger {
     @apply bg-red-800 text-center justify-center p-3 px-6 rounded text-white mt-4 flex gap-6 items-center hover:bg-opacity-80;
   }

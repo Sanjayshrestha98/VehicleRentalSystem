@@ -1,124 +1,55 @@
 import toast from 'react-hot-toast'
 import axios from '../../axios'
 import React, { useEffect, useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
-import Modal from 'react-modal'
 import { BiLoader, BiSolidStar, BiStar } from 'react-icons/bi'
 import { BsChevronDoubleRight } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import Rating from 'react-rating'
 
-
-
 function Explore() {
 
     const [vehicleData, setVehicleData] = useState([])
-    const [modalIsOpen, setModalIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [keyword, setKeyword] = useState("")
+    const [totalVehicleCount, setTotalVehicleCount] = useState(10)
+    const [totalVehiclePage, setTotalVehiclePage] = useState(10)
+    const [currentVehiclePage, setCurrentVehiclePage] = useState(1)
+    const [vehiclePageSize, setVehiclePageSize] = useState(10)
 
-    const [packageList, setPackageList] = useState()
+    const [minPrice, setMinPrice] = useState(0)
+    const [maxPrice, setMaxPrice] = useState(0)
+    const [vehicleType, setVehicleType] = useState("")
 
-    // const vehicleData = [{
-    //     name: 'BYD',
-    //     description: 'BYD',
-    //     type: 'two-wheeler',
-    //     seat: 2,
-    //     sku: 'two-wheeler',
-    //     price: 15000,
-    //     engine: 'BYD',
-    //     year: '2022',
-    //     model: 'BYD',
-    //     mileage: '25',
-    //     fuel_type: 'petrol',
-    //     images: ['car1.png'],
-    //     is_active: true,
-    //     is_deleted: false,
-    // },
-    // {
-    //     name: 'BYD',
-    //     description: 'BYD',
-    //     type: 'four-wheeler',
-    //     seat: 4,
-    //     sku: 'fpous-wheeler',
-    //     price: 50000,
-    //     engine: 'BYD',
-    //     year: '2021',
-    //     model: 'BYD',
-    //     mileage: '11',
-    //     fuel_type: 'diesel',
-    //     images: ['car1.png'],
-    //     is_active: true,
-    //     is_deleted: false,
-    // }]
-
-
-    const closeModal = () => {
-        setModalIsOpen(false)
-        setPackageList(undefined)
-    }
-
-    const getAllVehicle = async () => {
+    const getAllVehicle = async (min, max) => {
         try {
             let result = await axios.get("/vehicle", {
-                // params: {
-                //     search: keyword,
-                //     page: currentVehiclePage,
-                //     limit: vehiclePageSize,
-                // },
+                params: {
+                    search: keyword,
+                    page: currentVehiclePage,
+                    limit: vehiclePageSize,
+                    min: min,
+                    max: max,
+                    type: vehicleType
+
+                },
             });
 
             if (result.data.success) {
                 setVehicleData(result.data.data);
-                // setTotalVehicleCount(result.data.totalCount);
-                // setTotalVehiclePage(result.data.totalPage);
+                setTotalVehicleCount(result.data.totalCount);
+                setTotalVehiclePage(result.data.totalPage);
             } else toast.error("Failed");
         } catch (ERR) {
             console.log(ERR);
-            toast.error(ERR.response.data.message);
+            toast.error(ERR.response.data.msg);
         }
     }
 
     useEffect(() => {
         getAllVehicle()
-    }, [])
+    }, [keyword, totalVehiclePage, totalVehicleCount, vehicleType])
 
 
-    const makePayment = async (value, type) => {
-        try {
-            setIsLoading(true)
-            const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PL)
-
-            // const body = {
-            //     lesson_name: "",
-            //     lesson: "lessoniD",
-            //     lesson_type: "private",
-            //     price: "400"
-            // }
-            const body = {
-                lesson_name: value?.name,
-                lesson: packageList?._id,
-                lesson_type: type,
-                price: value[type]
-            }
-
-            const response = await axios.post(`${process.env.REACT_APP_BASE_URI}booking/create-intent`, body)
-            const result = stripe.redirectToCheckout({
-                vehicleId: response.data.id
-            })
-            if ((await result).error) {
-                setTimeout(() => {
-                    setIsLoading(false)
-                }, 500)
-                console.log((await result).error)
-            }
-        } catch (error) {
-            setTimeout(() => {
-                setIsLoading(false)
-                toast.error(error.response.data.message)
-            }, 500)
-            console.log(error)
-        }
-    }
 
     return (
         <div className='max-w-7xl mx-auto p-5'>
@@ -130,61 +61,59 @@ function Explore() {
                 </div>
             }
 
-            <Modal
-                ariaHideApp={false}
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                contentLabel="Choose Option"
-                overlayClassName="Overlay"
-                className="Modal rounded-md p-5 md:w-2/4 max-h-screen overflow-auto"
-            >
-
-                <p className='font-semibold'>Choose a Package of - "{packageList?.title}"</p>
-
-                <div className='grid gap-2 mt-4'>
-
-                    {
-                        packageList?.price.map((value, index) => (
-                            <div className='py-3 '>
-                                <p className='font-semibold' key={index}>{value?.name}</p>
-                                <div className='flex items-center gap-3 mt-1'>
-                                    <div className='flex  hover:bg-blue-300 w-fit p-2 border border-blue-100 rounded ' role='button' onClick={() => {
-                                        makePayment(value, "private")
-                                    }}>
-                                        <label>Private - </label>
-                                        <p className='' key={index}> $ {value?.private}</p>
-                                    </div>
-                                    <div className='flex  hover:bg-blue-300 w-fit p-2 border rounded border-blue-100' role='button' onClick={() => {
-                                        makePayment(value, "group")
-                                    }}>
-                                        <label>Group - </label>
-                                        <p className='' key={index}> $ {value?.group}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    }
-                </div>
-            </Modal>
-
             <div className='max-w-7xl mx-auto py-10 px-5 mb-10'>
                 <h1 className='lg:text-5xl text-4xl font-bold text-center '>Rent Your Dream Car and Bike</h1>
             </div>
 
             <div className='grid md:grid-cols-3 gap-7'>
-                <select className='inputfield'>
+                <select onChange={(e) => {
+                    setVehicleType(e.target.value)
+                }} className='inputfield'>
                     <option value={""}>Sort By Vehicle type</option>
                     <option value={"two-wheeler"}>Two Wheeler</option>
                     <option value={"four-wheeler"}>Four-Wheeler</option>
                 </select>
-                <select className='inputfield'>
-                    <option value={""}>Filter By Price</option>
-                    <option value={""}>Filter By Price</option>
-                    <option value={""}>Filter By Price</option>
-                </select>
+                <div className='inputfield group relative'>
+                    <span>Filter By Price</span>
+                    <div className='group-hover:h-fit z-10 group-hover:block h-0 hidden absolute bg-white p-5 border w-full left-0' >
+                        <form onSubmit={(e) => {
+                            e.preventDefault()
+                            getAllVehicle(minPrice, maxPrice)
+                        }} className='flex flex-wrap gap-5'>
+                            <div class="range-input">
+                                <p>Min</p>
+                                <input
+                                    onChange={(e) => {
+                                        setMinPrice(e.target.value)
+                                    }}
+                                    type="number"
+                                    class="inputfield"
+                                    min="0"
+                                    max="10000"
+                                    step="1" />
+                            </div>
 
-                <input type='string' className='inputfield' onChange={()=>{
-                    
+                            <div class="range-input">
+                                <p>Max</p>
+                                <input
+                                    onChange={(e) => {
+                                        setMaxPrice(e.target.value)
+                                    }}
+                                    type="number"
+                                    class="inputfield"
+                                    min={minPrice}
+                                    max="100000"
+                                    step="1" />
+                            </div>
+                            <button type="submit">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <input type='string' className='inputfield' onChange={(e) => {
+                    setKeyword(e.target.value)
                 }} placeholder='Search Here..............' />
             </div>
 
@@ -224,10 +153,7 @@ function Explore() {
                                             <p className='capitalize'>{value?.engine} Engine</p>
                                         </div>
                                     </div>
-                                    <Link to={'/vehicle/' + value.sku} className='!justify-center gap-2 btn-primary rounded-xl w-full' onClick={() => {
-                                        // setModalIsOpen(true)
-                                        // setPackageList(value)
-                                    }}>Book Now <BsChevronDoubleRight size={14} strokeWidth='1' /></Link>
+                                    <Link to={'/vehicle/' + value.sku} className='!justify-center gap-2 btn-primary rounded-xl w-full'>Book Now <BsChevronDoubleRight size={14} strokeWidth='1' /></Link>
                                 </div>
                             </div>
                         )))

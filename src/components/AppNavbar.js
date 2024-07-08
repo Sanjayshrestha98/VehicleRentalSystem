@@ -83,9 +83,7 @@ const AppNavbar = () => {
                 search: keyword
             }
         })
-    }
-
-    console.log('navbar', userDetails)
+    } 
 
     return (
         <div

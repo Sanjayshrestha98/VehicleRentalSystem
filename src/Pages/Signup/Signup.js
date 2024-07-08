@@ -54,7 +54,7 @@ function Signup() {
 
         } catch (error) {
             console.error('Error submitting form:', error);
-            toast.error(error.response.data.message || 'Error submitting form:')
+            toast.error(error.response.data.msg || 'Error submitting form:')
         }
     };
 
@@ -89,7 +89,7 @@ function Signup() {
                             address: "",
                             password: "",
                             confirmpassword: "",
-                            // role:'super-admin',
+                            // role:'superadmin',
                         }}
                         validationSchema={validationSchema}
                         onSubmit={(values, actions) => {

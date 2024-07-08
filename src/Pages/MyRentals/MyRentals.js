@@ -40,7 +40,7 @@ function MyRentals() {
 
   const getAllVehicle = async () => {
     try {
-      let result = await axios.get("/vehicle", {
+      let result = await axios.get("/booking/my-booking", {
         // params: {
         //     search: keyword,
         //     page: currentVehiclePage,
@@ -49,13 +49,14 @@ function MyRentals() {
       });
 
       if (result.data.success) {
+        console.log(result.data.data)
         setVehicleData(result.data.data);
         // setTotalVehicleCount(result.data.totalCount);
         // setTotalVehiclePage(result.data.totalPage);
       } else toast.error("Failed");
     } catch (ERR) {
       console.log(ERR);
-      toast.error(ERR.response.data.message);
+      toast.error(ERR.response.data.msg);
     }
   }
 
@@ -100,13 +101,13 @@ function MyRentals() {
               <div className={` grid grid-cols-6 border  rounded-2xl  overflow-hidden`}>
                 {/* <img className='w-full h-64 mb-5 object-cover' src={`${value?.images[0]}`} /> */}
                 <div className='h-80  col-span-2  '>
-                  <img className='w-full  h-full object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.images[0]}`} />
+                  <img className='w-full  h-full object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.vehicle?.images[0]}`} />
                 </div>
 
                 <div className='p-4 col-span-3 px-8 w-full'>
                   {/* <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} /> */}
-                  <h2 className='lg:text-2xl text-xl font-bold my-3 capitalize'>{value?.name}</h2>
-                  <p> <b className='text-blue-700'>Rs. {value.price}</b> / Day</p>
+                  <h2 className='lg:text-2xl text-xl font-bold my-3 capitalize'>{value?.vehicle?.name}</h2>
+                  <p> <b className='text-blue-700'>Rs. {value.vehicle?.price}</b> / Day</p>
 
                   <div className='grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-2 grid-cols-2 justify-center gap-8 mt-10 mb-3 '>
                     <div className='flex items-center  gap-2'>
@@ -115,7 +116,7 @@ function MyRentals() {
                       </div>
                       <div className='text-sm'>
                         <p className='uppercase font-semibold text-xs'>Passengers</p>
-                        <p className='capitalize'>{value?.seat} Seats</p>
+                        <p className='capitalize'>{value?.vehicle?.seat} Seats</p>
                       </div>
                     </div>
                     <div className='flex items-center justify-items-center gap-2'>
@@ -124,7 +125,7 @@ function MyRentals() {
                       </div>
                       <div className='text-sm'>
                         <p className='uppercase font-semibold text-xs'>Mileage:</p>
-                        <p className='capitalize'>{value?.mileage} Km/L</p>
+                        <p className='capitalize'>{value?.vehicle?.mileage} Km/L</p>
                       </div>
                     </div>
                     <div className='flex items-center justify-items-center gap-2'>
@@ -133,7 +134,7 @@ function MyRentals() {
                       </div>
                       <div className='text-sm'>
                         <p className='uppercase font-semibold text-xs'>Year:</p>
-                        <p className='capitalize'>{value?.year} Model</p>
+                        <p className='capitalize'>{value?.vehicle?.year} Model</p>
                       </div>
                     </div>
                     <div className='flex items-center justify-items-center gap-2'>
@@ -142,7 +143,7 @@ function MyRentals() {
                       </div>
                       <div className='text-sm'>
                         <p className='uppercase font-semibold text-xs'>Fuel:</p>
-                        <p className='capitalize'>{value?.fuel_type}</p>
+                        <p className='capitalize'>{value?.vehicle?.fuel_type}</p>
                       </div>
                     </div>
                     <div className='flex items-center justify-items-center gap-2'>
@@ -151,14 +152,14 @@ function MyRentals() {
                       </div>
                       <div className='text-sm'>
                         <p className='uppercase font-semibold text-xs'>Engine:</p>
-                        <p className='capitalize'>{value?.engine}</p>
+                        <p className='capitalize'>{value?.vehicle?.engine}</p>
                       </div>
                     </div>
                   </div>
 
                 </div>
                 <div className='col-span-1 grid items-center p-4'>
-                  <Link to={'/vehicle/' + value.sku} className='!justify-center gap-2 btn-primary rounded-xl w-full'>View Details </Link>
+                  <Link to={'/vehicle/' + value?.vehicle?.sku} className='!justify-center gap-2 btn-primary rounded-xl w-full'>View Details </Link>
                 </div>
               </div>
             )))
