@@ -226,7 +226,7 @@ function EditVehicle({ modalIsOpen, closeModal, getRoute, data }) {
                                 </label>
                                 <div className="mt-2">
                                     <Field
-                                        min={1}
+                                        min={10}
                                         type="number"
                                         id="price"
                                         name="price"

@@ -83,12 +83,13 @@ function Explore() {
                             <div class="range-input">
                                 <p>Min</p>
                                 <input
+                                    required
                                     onChange={(e) => {
                                         setMinPrice(e.target.value)
                                     }}
                                     type="number"
                                     class="inputfield"
-                                    min="0"
+                                    min="10"
                                     max="10000"
                                     step="1" />
                             </div>
@@ -96,6 +97,7 @@ function Explore() {
                             <div class="range-input">
                                 <p>Max</p>
                                 <input
+                                    required
                                     onChange={(e) => {
                                         setMaxPrice(e.target.value)
                                     }}
