@@ -77,7 +77,7 @@ function BecomeAHost() {
 
     const getAllVehicle = async () => {
         try {
-            let result = await axios.get("/vehicle", {
+            let result = await axios.get("/vehicle/my-vehicle", {
                 // params: {
                 //     search: keyword,
                 //     page: currentVehiclePage,
