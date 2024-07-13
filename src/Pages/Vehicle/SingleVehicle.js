@@ -9,6 +9,7 @@ import { AuthContext } from '../../context/authContext';
 import { Field, Form, Formik } from 'formik'
 import { loadStripe } from '@stripe/stripe-js'
 import Modal from 'react-modal'
+import dayjs from 'dayjs'
 
 function SingleVehicle() {
     const [isLoading, setIsLoading] = useState(false)
@@ -18,12 +19,45 @@ function SingleVehicle() {
     const [selectedImage, setSelectedImage] = useState();
 
     const [isAgree, setIsAgree] = useState(false);
+    const [rating, setRating] = useState(0);
 
-    const [show2, setShow2] = useState(false);
+    const [isVehicleOwned, setIsVehicleOwned] = useState(false);
     const [vehicleData, setVehicleData] = useState()
     const [modalIsOpen, setModalIsOpen] = useState(false)
 
+    const [reviewList, setReviewList] = useState([])
+
+    const [selectedVehicleData, setSelectedVehicleData] = useState()
+
     const [packageList, setPackageList] = useState()
+
+    const getMyBookings = async () => {
+        try {
+            let result = await axios.get("/booking/my-booking", {
+                params: {
+                    page: 1,
+                    limit: 9999,
+                },
+            });
+
+            if (result.data.success) {
+
+                const data = result.data.data.find((value) => (
+                    value.vehicle.sku === sku
+                ))
+
+                setSelectedVehicleData(data)
+                if (data) setIsVehicleOwned(true)
+            } else toast.error("Failed");
+        } catch (ERR) {
+            console.log(ERR);
+            toast.error(ERR.response.data.msg);
+        }
+    }
+
+    useEffect(() => {
+        getMyBookings()
+    }, [])
 
     const closeModal = () => {
         setModalIsOpen(false)
@@ -42,8 +76,9 @@ function SingleVehicle() {
 
             if (result.data.success) {
                 setVehicleData(result.data.data)
+                console.log(result.data.data)
                 setSelectedImage(result.data.data.images[0])
-
+                getReview(result.data.data._id)
             } else toast.error('Failed')
         } catch (ERR) {
             console.log(ERR)
@@ -63,7 +98,6 @@ function SingleVehicle() {
         scrollToTop()
     }, [])
 
-
     const makePayment = async (value, type) => {
         try {
 
@@ -82,9 +116,6 @@ function SingleVehicle() {
             } else {
                 console.log("Invalid dates");
             }
-
-            console.log(totalDays)
-
             const body = {
                 vehicle: vehicleData?._id,
                 price: vehicleData?.price * totalDays,
@@ -99,8 +130,6 @@ function SingleVehicle() {
             // const result = stripe.redirectToCheckout({
             //     vehicleId: response.data.id
             // })
-
-            console.log('result', response.data.url)
             if (response.data.url) {
                 window.location.href = response.data.url
             }
@@ -122,16 +151,34 @@ function SingleVehicle() {
 
     const addReview = async (values, actions) => {
         try {
-            let result = await axios.post('/review/', values)
+            let result = await axios.post('/review/', {
+                ...values,
+                vehicle: selectedVehicleData.vehicle._id,
+                rating: rating
+            })
 
             if (result.data.success) {
-                console.log('Hello')
-            } else toast.error('Failed')
+                toast.success(result.data.msg)
+                setRating(0)
+                actions.resetForm()
+                getVehicleDetails()
+            } else toast.error(result.data.msg || 'Failed')
         } catch (ERR) {
             toast.error('Failed')
         }
     }
 
+    const getReview = async (id) => {
+        try {
+            let result = await axios.get('/review/' + id)
+
+            if (result.data.success) {
+                setReviewList(result.data.data)
+            } else toast.error(result.data.msg || 'Failed')
+        } catch (ERR) {
+            toast.error('Failed')
+        }
+    }
 
     return (
         <div className="md:flex items-start justify-center py-12 2xl:px-20 md:px-6 px-4 container mx-auto">
@@ -211,27 +258,6 @@ function SingleVehicle() {
                         )}
 
                     </Formik>
-                    {/* {
-                        packageList?.price.map((value, index) => (
-                            <div className='py-3 '>
-                                <p className='font-semibold' key={index}>{value?.name}</p>
-                                <div className='flex items-center gap-3 mt-1'>
-                                    <div className='flex  hover:bg-blue-300 w-fit p-2 border border-blue-100 rounded ' role='button' onClick={() => {
-                                        makePayment(value, "private")
-                                    }}>
-                                        <label>Private - </label>
-                                        <p className='' key={index}> $ {value?.private}</p>
-                                    </div>
-                                    <div className='flex  hover:bg-blue-300 w-fit p-2 border rounded border-blue-100' role='button' onClick={() => {
-                                        makePayment(value, "group")
-                                    }}>
-                                        <label>Group - </label>
-                                        <p className='' key={index}> $ {value?.group}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    } */}
                 </div>
             </Modal>
 
@@ -245,52 +271,80 @@ function SingleVehicle() {
                         }} alt={vehicleData?.name} className={`md:w-48 md:h-48 h-20 w-full object-contain border-2 ${selectedImage === img ? "border-blue-600 shadow" : "border-gray-200"}`} src={`${process.env.REACT_APP_IMG_URI}${img}`} />
                     ))}
                 </div>
-                <Formik
-                    enableReinitialize
-                    initialValues={{
-                        name: "",
-                        email: "",
-                        message: ""
-                    }}
-                    onSubmit={(values, actions) => {
-                        addReview(values, actions);
-                    }}
-                    className='mt-10'>
-                    {(props) => (
-                        <Form >
-                            <h2 className='font-semibold text-lg mt-10'>Add a Review</h2>
-                            <p className='my-3 mb-10'>Your email address will not be published. Required fields are marked <b className='text-red-600'>*</b></p>
 
-                            <div className='my-3'>
-                                <Rating initialRating={0} step={1} fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} />
+                {
+                    isVehicleOwned &&
+                    <Formik
+                        enableReinitialize
+                        initialValues={{
+                            message: ""
+                        }}
+                        onSubmit={(values, actions) => {
+                            addReview(values, actions);
+                        }}
+                        className='mt-10'>
+                        {(props) => (
+                            <Form >
+                                <h2 className='font-semibold text-lg mt-10'>Add a Review</h2>
+                                <p className='my-3 mb-10'>Your email address will not be published. Required fields are marked <b className='text-red-600'>*</b></p>
+
+                                <div className='my-3'>
+                                    <Rating onChange={(value) => {
+                                        setRating(value)
+                                    }}
+                                        initialRating={rating}
+
+                                        fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} />
+                                </div>
+
+                                <div className='grid grid-cols-2 gap-3'>
+                                    <div className='col-span-full'>
+                                        <label>Your Review <b className='text-red-600'>*</b></label>
+                                        <Field required as="textarea" name="message" className='inputfield mt-2' />
+                                    </div>
+
+                                    <button className='btn-primary' type='submit'>
+                                        Submit
+                                    </button>
+                                </div>
+                            </Form>
+                        )}
+
+                    </Formik>
+                }
+                <div className='mt-10 border-t pt-5'>
+
+                    {
+                        reviewList.length > 0 ?
+                            <p className='text-center font-semibold text-xl'>Latest Reviews</p>
+                            :
+                            <p className='text-center font-semibold text-xl text-gray-300'>No Reviews Available</p>
+                    }
+
+                    {
+                        reviewList.map((review) => (
+                            <div className=" text-base bg-white rounded-lg mb-10 mt-5 ">
+                                <div className="flex justify-between items-center mb-2">
+                                    <div className="flex items-center">
+                                        <p className="inline-flex items-center mr-3 text-sm text-gray-900  font-semibold">
+                                            {/* <img
+                                                className="mr-2 w-6 h-6 rounded-full"
+                                                src={`${process.env.REACT_APP_IMG_URI}${review.user.image}`}
+                                                alt="Michael Gough" /> */}
+                                            {review.user.firstname} {review.user.lastname}
+                                        </p>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-4"> {dayjs(review.updatedAt).format('MMM DD, YYYY')} </p>
+                                <p className="text-gray-500 ">{review.message}</p>
                             </div>
-
-                            <div className='grid grid-cols-2 gap-3'>
-                                <div className=''>
-                                    <label>Name <b className='text-red-600'>*</b></label>
-                                    <Field required name="name" className='inputfield mt-2' />
-                                </div>
-                                <div className=''>
-                                    <label>Email <b className='text-red-600'>*</b></label>
-                                    <Field required name="email" className='inputfield mt-2' type="email" />
-                                </div>
-                                <div className='col-span-full'>
-                                    <label>Your Review <b className='text-red-600'>*</b></label>
-                                    <Field required as="textarea" name="message" className='inputfield mt-2' />
-                                </div>
-
-                                <button className='btn-primary' type='submit'>
-                                    Submit
-                                </button>
-                            </div>
-                        </Form>
-                    )}
-
-                </Formik>
+                        ))
+                    }
+                </div>
             </div>
 
             <div className=" md:w-1/2 lg:ml-8 md:ml-6 md:mt-0 mt-6">
-                <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} />
+                <Rating initialRating={vehicleData?.rating} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} />
 
                 <div className="border-b border-gray-200 pb-6">
                     <h1
@@ -364,40 +418,80 @@ function SingleVehicle() {
                         </div>
                     </div>
                 </div>
-                <div className="border-b border-gray-200 py-6">
-                    <p className="text-lg leading-none font-semibold">Included in the Price</p>
 
-                    <ul className='mt-4'>
-                        {
-                            includedInPrice.map((value) => (
-                                <li className='flex gap-2 items-center text-gray-600 mb-2'><CiCircleCheck color='green' size={20} /> {value}</li>
-                            ))
-                        }
-                    </ul>
-                </div>
+                {
+                    isVehicleOwned ?
+                        <>
+                            <div className='grid gap-4 p-7 border-2 mt-5 rounded-xl shadow text-gray-500'>
+                                <p className='text-center text-2xl font-bold '>Booking Details</p>
+                                <p className=''>Note: If changes in pick up and drop dates needs to be done, you should contact the admin before 24 hrs.</p>
 
-                <div className="border-b border-gray-200 py-6">
-                    <p className="text-lg leading-none font-semibold">Rental Policy</p>
+                                <div className='grid gap-4 py-4'>
+                                    <div className='flex gap-4'>
+                                        <p className='w-1/4 font-semibold'>Pickup Date</p>
+                                        <p>:</p>
+                                        <p>{selectedVehicleData.pickup_date}</p>
+                                    </div>
+                                    <div className='flex gap-4'>
+                                        <p className='w-1/4 font-semibold'>Drop Date</p>
+                                        <p>:</p>
+                                        <p>{selectedVehicleData.drop_date}</p>
+                                    </div>
+                                    <div className='flex gap-4'>
+                                        <p className='w-1/4 font-semibold'>Address</p>
+                                        <p>:</p>
+                                        <p>{selectedVehicleData.address}</p>
+                                    </div>
+                                    <div className='flex gap-4'>
+                                        <p className='w-1/4 font-semibold'>Contact</p>
+                                        <p>:</p>
+                                        <p>{selectedVehicleData.contact}</p>
+                                    </div>
+                                    <div className='flex gap-4'>
+                                        <p className='w-1/4 font-semibold'>Price</p>
+                                        <p>:</p>
+                                        <p>Rs. {selectedVehicleData.price}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                        :
+                        <>
+                            <div className="border-b border-gray-200 py-6">
+                                <p className="text-lg leading-none font-semibold">Included in the Price</p>
 
-                    <ul className='mt-4 pl-2'>
-                        <li className='text-gray-600 mb-2'><b>Pay only 15% now,</b> and the rest at the destination.</li>
-                        <li className='text-gray-600 mb-2'>Cancel up-to <b>48 hours before pick-up</b> and get a full refund.</li>
-                        <li className='text-gray-600 mb-2'>This vehicle requires a licence category <b>A1,</b> or equivalent.</li>
-                        <li className='text-gray-600 mb-2'>You’ll need to be at least <b>18 years old</b> to rent it with 12 months driving experience.</li>
-                        <li className='text-gray-600 mb-2'>A <b>refundable</b> security-deposit is required ( 24 € debit-card, ) on pickup.</li>
-                        <li className='text-gray-600 mb-2'>This car includes <b>unlimited mileage </b> per day in the price.</li>
-                    </ul>
-                </div>
+                                <ul className='mt-4'>
+                                    {
+                                        includedInPrice.map((value) => (
+                                            <li className='flex gap-2 items-center text-gray-600 mb-2'><CiCircleCheck color='green' size={20} /> {value}</li>
+                                        ))
+                                    }
+                                </ul>
+                            </div>
+                            <div className="border-b border-gray-200 py-6">
+                                <p className="text-lg leading-none font-semibold">Rental Policy</p>
 
-                <div>
-                    {
-                        isAuthenticated &&
-                        <button className='btn-primary' onClick={() => {
-                            setModalIsOpen(true)
-                            setPackageList(vehicleData)
-                        }}>Book Now</button>
-                    }
-                </div>
+                                <ul className='mt-4 pl-2'>
+                                    <li className='text-gray-600 mb-2'><b>Pay only 15% now,</b> and the rest at the destination.</li>
+                                    <li className='text-gray-600 mb-2'>Cancel up-to <b>48 hours before pick-up</b> and get a full refund.</li>
+                                    <li className='text-gray-600 mb-2'>This vehicle requires a licence category <b>A1,</b> or equivalent.</li>
+                                    <li className='text-gray-600 mb-2'>You’ll need to be at least <b>18 years old</b> to rent it with 12 months driving experience.</li>
+                                    <li className='text-gray-600 mb-2'>A <b>refundable</b> security-deposit is required ( 24 € debit-card, ) on pickup.</li>
+                                    <li className='text-gray-600 mb-2'>This car includes <b>unlimited mileage </b> per day in the price.</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                {
+                                    isAuthenticated &&
+                                    <button className='btn-primary' onClick={() => {
+                                        setModalIsOpen(true)
+                                        setPackageList(vehicleData)
+                                    }}>Book Now</button>
+                                }
+                            </div>
+                        </>
+                }
             </div>
         </div>
     )

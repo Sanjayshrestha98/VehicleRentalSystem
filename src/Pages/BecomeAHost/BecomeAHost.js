@@ -34,48 +34,14 @@ function BecomeAHost() {
     };
     const openEditModal = () => {
         setIsEditModalOpen(true);
-    };
-
-    // const vehicleData = [{
-    //     name: 'BYD',
-    //     description: 'BYD',
-    //     type: 'two-wheeler',
-    //     seat: 2,
-    //     sku: 'two-wheeler',
-    //     price: 15000,
-    //     engine: 'BYD',
-    //     year: '2022',
-    //     model: 'BYD',
-    //     mileage: '25',
-    //     fuel_type: 'petrol',
-    //     images: ['car1.png'],
-    //     is_active: true,
-    //     is_deleted: false,
-    // },
-    // {
-    //     name: 'BYD',
-    //     description: 'BYD',
-    //     type: 'four-wheeler',
-    //     seat: 4,
-    //     sku: 'fpous-wheeler',
-    //     price: 50000,
-    //     engine: 'BYD',
-    //     year: '2021',
-    //     model: 'BYD',
-    //     mileage: '11',
-    //     fuel_type: 'diesel',
-    //     images: ['car1.png'],
-    //     is_active: true,
-    //     is_deleted: false,
-    // }]
-
+    }; 
 
     const closeModal = () => {
         setModalIsOpen(false)
         setPackageList(undefined)
     }
 
-    const getAllVehicle = async () => {
+    const getMyVehicles = async () => {
         try {
             let result = await axios.get("/vehicle/my-vehicle", {
                 // params: {
@@ -87,6 +53,7 @@ function BecomeAHost() {
 
             if (result.data.success) {
                 setVehicleData(result.data.data);
+                console.log(result.data.data);
                 // setTotalVehicleCount(result.data.totalCount);
                 // setTotalVehiclePage(result.data.totalPage);
             } else toast.error("Failed");
@@ -97,7 +64,7 @@ function BecomeAHost() {
     }
 
     useEffect(() => {
-        getAllVehicle()
+        getMyVehicles()
     }, [])
 
     const removeItem = async (id) => {
@@ -114,7 +81,7 @@ function BecomeAHost() {
                 if (result.isConfirmed) {
                     let result = await axios.delete("vehicle/" + id);
                     if (result.data.success) {
-                        getAllVehicle();
+                        getMyVehicles();
                         toast.success("Deleted Successfully");
                     }
                 }
@@ -169,17 +136,18 @@ function BecomeAHost() {
                 <AddVehicle
                     closeModal={closeAddModal}
                     modalIsOpen={isAddModalOpen}
-                    getRoute={getAllVehicle}
+                    getRoute={getMyVehicles}
                 />
             )}
             {isEditModalOpen && (
                 <EditVehicle
                     closeModal={closeEditModal}
                     modalIsOpen={isEditModalOpen}
-                    getRoute={getAllVehicle}
+                    getRoute={getMyVehicles}
                     data={selectedVehicleData}
                 />
             )}
+             
             {
                 isLoading &&
                 <div className='fixed h-screen top-0 w-full bg-black bg-opacity-65 z-[999999] grid place-items-center'>
@@ -190,8 +158,6 @@ function BecomeAHost() {
             <div className='max-w-7xl mx-auto py-10 px-5 mb-10'>
                 <h1 className='lg:text-5xl text-4xl font-bold text-center '>Add Your Vehicles To Rent</h1>
             </div>
-
-
 
             <div className='flex flex-row-reverse'>
                 <button onClick={() => {
@@ -205,7 +171,7 @@ function BecomeAHost() {
                     (vehicleData.length === 0 ?
                         <p className='p-5 font-semibold text-red-800'>No Vehicles Yet</p> :
                         vehicleData.map((value, index) => (
-                            <div className={` grid grid-cols-6 border  rounded-2xl  overflow-hidden`}>
+                            <div className={` grid grid-cols-6 border  rounded-2xl  overflow-hidden relative`}>
                                 {/* <img className='w-full h-64 mb-5 object-cover' src={`${value?.images[0]}`} /> */}
                                 <div className='h-80  col-span-2  '>
                                     <img className='w-full  h-full object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.images[0]}`} />
@@ -213,6 +179,7 @@ function BecomeAHost() {
 
                                 <div className='p-4 col-span-3 px-8 w-full'>
                                     {/* <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} /> */}
+                                    <p className={`w-fit text-sm  font-semibold   rounded-2xl ${value.is_active ? "text-green-500" : "text-red-500"} `}> {value.is_active ? "Verified" : "Not Verified !!"} </p>
                                     <h2 className='lg:text-2xl text-xl font-bold my-3 capitalize'>{value?.name}</h2>
                                     <p> <b className='text-blue-700'>Rs. {value.price}</b> / Day</p>
 

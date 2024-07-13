@@ -13,7 +13,12 @@ function MyRentals() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [vehicleData, setVehicleData] = useState([])
+  const [keyword, setKeyword] = useState("")
+
+  const [currentVehiclePage, setCurrentVehiclePage] = useState(1)
+  const [vehiclePageSize, setVehiclePageSize] = useState(10)
   const [selectedVehicleData, setSelectedVehicleData] = useState("")
+  const [vehicleType, setVehicleType] = useState("")
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -38,14 +43,15 @@ function MyRentals() {
     setPackageList(undefined)
   }
 
-  const getAllVehicle = async () => {
+  const getMyBookings = async () => {
     try {
       let result = await axios.get("/booking/my-booking", {
-        // params: {
-        //     search: keyword,
-        //     page: currentVehiclePage,
-        //     limit: vehiclePageSize,
-        // },
+        params: {
+          search: keyword,
+          page: currentVehiclePage,
+          limit: vehiclePageSize,
+          type: vehicleType
+        },
       });
 
       if (result.data.success) {
@@ -61,8 +67,8 @@ function MyRentals() {
   }
 
   useEffect(() => {
-    getAllVehicle()
-  }, []) 
+    getMyBookings()
+  }, [vehicleType, keyword])
 
   return (
     <div className='max-w-7xl mx-auto p-5'>
@@ -79,15 +85,17 @@ function MyRentals() {
       </div>
 
       <div className='grid md:grid-cols-3 gap-7'>
-        <select className='inputfield'>
+        <select onChange={(e) => {
+          setVehicleType(e.target.value)
+        }} className='inputfield'>
           <option value={""}>Sort By Vehicle type</option>
           <option value={"two-wheeler"}>Two Wheeler</option>
           <option value={"four-wheeler"}>Four-Wheeler</option>
         </select>
         <span />
 
-        <input type='string' className='inputfield' onChange={() => {
-
+        <input type='string' className='inputfield' onChange={(e) => {
+          setKeyword(e.target.value)
         }} placeholder='Search Here..............' />
       </div>
 
