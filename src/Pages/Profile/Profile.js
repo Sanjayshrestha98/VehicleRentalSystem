@@ -8,6 +8,8 @@ import { CgAlarm } from 'react-icons/cg'
 import dayjs from 'dayjs'
 import ConfirmPassword from './ConfirmPassword'
 import { BiLinkExternal } from 'react-icons/bi'
+import BookingSpending from './BookingSpending'
+import MyIncome from './MyIncome'
 
 function Profile() {
     const { userDetails, setUserDetails } = useContext(AuthContext)
@@ -100,9 +102,9 @@ function Profile() {
                 case 2:
                     return <ConfirmPassword />
                 case 3:
-                    return <div>tab 3</div>
+                    return <BookingSpending />
                 case 4:
-                    return <div>tab 4</div>
+                    return <MyIncome />
             }
         } catch (ERR) {
             console.log(ERR)

@@ -22,14 +22,14 @@ function ConfirmPassword({ modalIsOpen, closeModal, getRoute, profileDetails }) 
     const handleFormSubmit = async (values, actions) => {
         try {
             // Make an Axios POST request
-            const response = await axios.put('/user/change-password/' + userDetails._id, {
-                password: values.password
+            const response = await axios.put('/user/change-password/', {
+                password: values.password,
+                oldpassword: values.currentPassword
             });
 
             if (response.data.success) {
-                toast.success('Editing Successfull')
-                getRoute()
-                closeModal()
+                toast.success('Password Changed')
+                actions.resetForm()
             }
 
             // Handle the response as needed (e.g., redirect, show a success message)
