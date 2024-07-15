@@ -8,8 +8,7 @@ import Explore from '../Explore/Explore';
 export default function Home() {
 
     const { userDetails, isAuthenticated } = useContext(AuthContext);
-
-    console.log(userDetails)
+ 
     return (
         <div className="bg-white">
 

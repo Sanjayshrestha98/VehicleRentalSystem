@@ -11,8 +11,7 @@ function BookingSpending() {
             const result = await axios.get('/booking/my-booking-transaction/');
 
             if (result.data.success) {
-                setBookingDetails(result.data.result)
-                console.log(result.data.result)
+                setBookingDetails(result.data.result) 
             }
 
         } catch (error) {

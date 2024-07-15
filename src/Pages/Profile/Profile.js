@@ -55,8 +55,7 @@ function Profile() {
         try {
             let result = await axios.get('/notice')
             if (result.data.success) {
-                setNotices(result.data.data.data)
-                console.log(result.data.data.data)
+                setNotices(result.data.data.data) 
 
             }
         } catch (ERR) {

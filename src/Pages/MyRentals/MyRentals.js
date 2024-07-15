@@ -54,8 +54,7 @@ function MyRentals() {
         },
       });
 
-      if (result.data.success) {
-        console.log(result.data.data)
+      if (result.data.success) { 
         setVehicleData(result.data.data);
         // setTotalVehicleCount(result.data.totalCount);
         // setTotalVehiclePage(result.data.totalPage);
@@ -106,7 +105,7 @@ function MyRentals() {
           (vehicleData.length === 0 ?
             <p className='p-5 font-semibold text-red-800'>No Vehicles Yet</p> :
             vehicleData.map((value, index) => (
-              <div className={` grid grid-cols-6 border  rounded-2xl  overflow-hidden`}>
+              <div key={index} className={` grid grid-cols-6 border  rounded-2xl  overflow-hidden`}>
                 {/* <img className='w-full h-64 mb-5 object-cover' src={`${value?.images[0]}`} /> */}
                 <div className='h-80  col-span-2  '>
                   <img className='w-full  h-full object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.vehicle?.images[0]}`} />

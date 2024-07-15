@@ -37,10 +37,7 @@ function Signup() {
         try {
             let data = { ...values }
 
-            delete data.confirmpassword
-
-            console.log('data', data)
-            console.log('values', values)
+            delete data.confirmpassword 
 
             const response = await axios.post('/user/register', data);
 
@@ -226,7 +223,7 @@ function Signup() {
                                         />
                                     </div>
                                     <FieldError message={props.touched.confirmpassword && props.errors.confirmpassword} />
-                                    {console.log(props.errors)}
+                                  
                                 </div>
 
 

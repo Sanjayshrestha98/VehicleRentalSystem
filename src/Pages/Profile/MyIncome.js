@@ -8,11 +8,10 @@ function MyIncome() {
 
     const getData = async () => {
         try { 
-            const result = await axios.get('/booking/my-booking-transaction/');
+            const result = await axios.get('/booking/my-income-transaction/');
 
             if (result.data.success) {
-                setBookingDetails(result.data.result)
-                console.log(result.data.result)
+                setBookingDetails(result.data.result) 
             }
 
         } catch (error) {

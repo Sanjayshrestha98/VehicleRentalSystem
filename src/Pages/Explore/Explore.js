@@ -104,8 +104,7 @@ function Explore() {
                         searchVehicle(values, actions)
                     }}>
                     {(props) => (
-                        <Form>
-                            {console.log(props.values)}
+                        <Form> 
                             <div className='grid grid-cols-3 gap-4 mt-10'>
                                 <div className='w-full'>
                                     <label>Pickup Date</label>
@@ -125,7 +124,7 @@ function Explore() {
                                                 setMinPrice(e.target.value)
                                             }}
                                             type="number"
-                                            class="inputfield w-full"
+                                            className="inputfield w-full"
                                             min="10"
                                             max="10000"
                                             step="1" />
@@ -136,7 +135,7 @@ function Explore() {
                                                 setMaxPrice(e.target.value)
                                             }}
                                             type="number"
-                                            class="inputfield w-full"
+                                            className="inputfield w-full"
                                             min={minPrice}
                                             max="100000"
                                             step="1" />
@@ -158,7 +157,7 @@ function Explore() {
                                 </div>
                             </div>
                             <div className='flex justify-center'>
-                                <button className='mt-5 p-3 btn-primary px-5'>Submit</button>
+                                <button type='submit' className='mt-5 p-3 btn-primary px-5'>Submit</button>
                             </div>
                         </Form>
                     )}
@@ -185,7 +184,7 @@ function Explore() {
                                 e.preventDefault()
                                 getAllVehicle(minPrice, maxPrice)
                             }} className='flex flex-wrap gap-5'>
-                                <div class="range-input">
+                                <div className="range-input">
                                     <p>Min</p>
                                     <input
                                         required
@@ -193,13 +192,13 @@ function Explore() {
                                             setMinPrice(e.target.value)
                                         }}
                                         type="number"
-                                        class="inputfield"
+                                        className="inputfield"
                                         min="10"
                                         max="10000"
                                         step="1" />
                                 </div>
 
-                                <div class="range-input">
+                                <div className="range-input">
                                     <p>Max</p>
                                     <input
                                         required
@@ -207,7 +206,7 @@ function Explore() {
                                             setMaxPrice(e.target.value)
                                         }}
                                         type="number"
-                                        class="inputfield"
+                                        className="inputfield"
                                         min={minPrice}
                                         max="100000"
                                         step="1" />
@@ -235,7 +234,7 @@ function Explore() {
                                 (vehicleData.length === 0 ?
                                     <p className='p-5 font-semibold text-red-800'>No Vehicles Found</p> :
                                     vehicleData.map((value, index) => (
-                                        <div className={`  border rounded-2xl  overflow-hidden`}>
+                                        <div key={index} className={`  border rounded-2xl  overflow-hidden`}>
                                             <div className='relative'>
                                                 <span className='w-fit absolute bg-blue-800 top-4 right-4 p-1 px-4 text-sm text-white rounded-md'>{value?.year} model</span>
                                                 {/* <img className='w-full h-64 mb-5 object-cover' src={`${value?.images[0]}`} /> */}

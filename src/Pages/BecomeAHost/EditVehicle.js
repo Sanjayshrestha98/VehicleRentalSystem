@@ -12,12 +12,8 @@ function EditVehicle({ modalIsOpen, closeModal, getRoute, data }) {
     const [images, setImages] = useState([])
     const uploadRef = useRef(null)
     const [prevImageList, setPrevImageList] = useState(data.images)
-
-    console.log('data', data)
-
-    const handleImages = (files) => {
-
-        console.log('files', files)
+ 
+    const handleImages = (files) => { 
         setImages([
             ...files
         ])
@@ -327,7 +323,7 @@ function EditVehicle({ modalIsOpen, closeModal, getRoute, data }) {
                                 <div className='flex gap-2 items-center mt-3'>
                                     {
                                         prevImageList?.map((value, index) => (
-                                            <div className='relative'>
+                                            <div className='relative' key={index}>
                                                 {/* <button type='button' onClick={() => {
                                                     removeItem(value)
                                                 }} className='absolute bottom-0 bg-red-600 w-full text-white text-xs'>Remove</button> */}
@@ -340,7 +336,7 @@ function EditVehicle({ modalIsOpen, closeModal, getRoute, data }) {
                                 <div className='flex gap-2 items-center mt-3'>
                                     {
                                         images.length > 0 && images?.map((value, index) => (
-                                            <div className='relative'>
+                                            <div className='relative' key={index}>
                                                 <button type='button' onClick={() => {
                                                     removeItem(index)
                                                 }} className='absolute bottom-0 bg-red-600 w-full text-white text-xs'>Remove</button>

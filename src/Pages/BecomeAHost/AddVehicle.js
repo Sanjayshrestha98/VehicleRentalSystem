@@ -11,12 +11,9 @@ function AddVehicle({ modalIsOpen, closeModal, getRoute }) {
 
     const [images, setImages] = useState([])
     const uploadRef = useRef(null)
-
-    console.log('images', images)
-
+ 
     const handleImages = (files) => {
-
-        console.log('files', files)
+ 
         setImages([
             ...files
         ])
@@ -326,7 +323,7 @@ function AddVehicle({ modalIsOpen, closeModal, getRoute }) {
                                 <div className='flex gap-2 items-center mt-3'>
                                     {
                                         images.length > 0 && images?.map((value, index) => (
-                                            <div className='relative'>
+                                            <div className='relative' key={index}>
                                                 <button type='button' onClick={() => {
                                                     removeItem(index)
                                                 }} className='absolute bottom-0 bg-red-600 w-full text-white text-xs'>Remove</button>

@@ -1,7 +1,7 @@
 import axios from '../../axios'
 import React, { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { BiLoader, BiSolidStar, BiStar } from 'react-icons/bi'
+import { BiEdit, BiLoader, BiSolidStar, BiStar } from 'react-icons/bi'
 import { CiCircleCheck } from 'react-icons/ci'
 import Rating from 'react-rating'
 import { useParams } from 'react-router-dom'
@@ -10,6 +10,7 @@ import { Field, Form, Formik } from 'formik'
 import { loadStripe } from '@stripe/stripe-js'
 import Modal from 'react-modal'
 import dayjs from 'dayjs'
+import EditBookingModal from './EditBookingModal'
 
 function SingleVehicle() {
     const [isLoading, setIsLoading] = useState(false)
@@ -24,6 +25,8 @@ function SingleVehicle() {
     const [isVehicleOwned, setIsVehicleOwned] = useState(false);
     const [vehicleData, setVehicleData] = useState()
     const [modalIsOpen, setModalIsOpen] = useState(false)
+
+    const [openEditModal, setOpenEditModal] = useState(false)
 
     const [reviewList, setReviewList] = useState([])
 
@@ -75,8 +78,7 @@ function SingleVehicle() {
             let result = await axios.get('/vehicle/' + sku)
 
             if (result.data.success) {
-                setVehicleData(result.data.data)
-                console.log(result.data.data)
+                setVehicleData(result.data.data) 
                 setSelectedImage(result.data.data.images[0])
                 getReview(result.data.data._id)
             } else toast.error('Failed')
@@ -180,6 +182,16 @@ function SingleVehicle() {
         }
     }
 
+    const closeEditBookingModal = () => {
+        setOpenEditModal(false)
+    }
+
+
+    const getRouteAfterEdit = () => {
+        getVehicleDetails()
+        getMyBookings()
+    }
+
     return (
         <div className="md:flex items-start justify-center py-12 2xl:px-20 md:px-6 px-4 container mx-auto">
             {
@@ -187,6 +199,16 @@ function SingleVehicle() {
                 <div className='fixed h-screen top-0 w-full bg-black bg-opacity-65 z-[999999] grid place-items-center'>
                     <label className='flex items-center gap-3 font-semibold text-white'><BiLoader className='animate-spin' /> Loading... </label>
                 </div>
+            }
+
+            {
+                openEditModal &&
+                <EditBookingModal
+                    closeModal={closeEditBookingModal}
+                    getRoute={getRouteAfterEdit}
+                    modalIsOpen={openEditModal}
+                    data={selectedVehicleData}
+                />
             }
 
             <Modal
@@ -265,8 +287,8 @@ function SingleVehicle() {
             <div className="md:w-1/2">
                 <img className="w-full md:h-96 h-72 object-contain" alt={vehicleData?.name} src={`${process.env.REACT_APP_IMG_URI}${selectedImage}`} />
                 <div className="flex items-center  mt-3 space-x-4 md:space-x-2 overflow-x-auto">
-                    {vehicleData?.images && vehicleData?.images.map((img) => (
-                        <img onClick={() => {
+                    {vehicleData?.images && vehicleData?.images.map((img, index) => (
+                        <img key={index} onClick={() => {
                             setSelectedImage(img)
                         }} alt={vehicleData?.name} className={`md:w-48 md:h-48 h-20 w-full object-contain border-2 ${selectedImage === img ? "border-blue-600 shadow" : "border-gray-200"}`} src={`${process.env.REACT_APP_IMG_URI}${img}`} />
                     ))}
@@ -322,8 +344,8 @@ function SingleVehicle() {
                     }
 
                     {
-                        reviewList.map((review) => (
-                            <div className=" text-base bg-white rounded-lg mb-10 mt-5 ">
+                        reviewList.map((review, index) => (
+                            <div key={index} className=" text-base bg-white rounded-lg mb-10 mt-5 ">
                                 <div className="flex justify-between items-center mb-2">
                                     <div className="flex items-center">
                                         <p className="inline-flex items-center mr-3 text-sm text-gray-900  font-semibold">
@@ -422,7 +444,15 @@ function SingleVehicle() {
                 {
                     isVehicleOwned ?
                         <>
-                            <div className='grid gap-4 p-7 border-2 mt-5 rounded-xl shadow text-gray-500'>
+                            <div className='grid gap-4 p-7 border-2 mt-5 rounded-xl shadow text-gray-500 relative'>
+
+                                <button className='absolute right-2 top-2'
+                                    onClick={() => {
+                                        setOpenEditModal(true)
+                                    }}>
+                                    <BiEdit />
+                                </button>
+
                                 <p className='text-center text-2xl font-bold '>Booking Details</p>
                                 <p className=''>Note: If changes in pick up and drop dates needs to be done, you should contact the admin before 24 hrs.</p>
 
@@ -462,8 +492,8 @@ function SingleVehicle() {
 
                                 <ul className='mt-4'>
                                     {
-                                        includedInPrice.map((value) => (
-                                            <li className='flex gap-2 items-center text-gray-600 mb-2'><CiCircleCheck color='green' size={20} /> {value}</li>
+                                        includedInPrice.map((value, index) => (
+                                            <li key={index} className='flex gap-2 items-center text-gray-600 mb-2'><CiCircleCheck color='green' size={20} /> {value}</li>
                                         ))
                                     }
                                 </ul>
