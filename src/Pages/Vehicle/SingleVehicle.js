@@ -39,7 +39,7 @@ function SingleVehicle() {
             let result = await axios.get("/booking/my-booking", {
                 params: {
                     page: 1,
-                    limit: 9999,
+                    size: 9999,
                 },
             });
 
@@ -69,7 +69,7 @@ function SingleVehicle() {
 
     const includedInPrice = [
         "Map",
-        "Unlimited Mileage",
+        "Unsizeed Mileage",
         "Theft Insurance"
     ]
 
@@ -507,7 +507,7 @@ function SingleVehicle() {
                                     <li className='text-gray-600 mb-2'>This vehicle requires a licence category <b>A1,</b> or equivalent.</li>
                                     <li className='text-gray-600 mb-2'>You’ll need to be at least <b>18 years old</b> to rent it with 12 months driving experience.</li>
                                     <li className='text-gray-600 mb-2'>A <b>refundable</b> security-deposit is required ( 24 € debit-card, ) on pickup.</li>
-                                    <li className='text-gray-600 mb-2'>This car includes <b>unlimited mileage </b> per day in the price.</li>
+                                    <li className='text-gray-600 mb-2'>This car includes <b>unsizeed mileage </b> per day in the price.</li>
                                 </ul>
                             </div>
 

@@ -65,7 +65,7 @@ function User() {
                 params: {
                     search: keyword,
                     page: currentUserPage,
-                    limit: userPageSize
+                    size: userPageSize
                 }
             })
 

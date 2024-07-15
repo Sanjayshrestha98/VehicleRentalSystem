@@ -3,15 +3,15 @@ import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
 function BookingSpending() {
- 
+
     const [bookingDetails, setBookingDetails] = useState()
- 
+
     const getData = async (values, actions) => {
         try {
             const result = await axios.get('/booking/my-booking-transaction/');
 
             if (result.data.success) {
-                setBookingDetails(result.data.result) 
+                setBookingDetails(result.data.result)
             }
 
         } catch (error) {
@@ -76,8 +76,12 @@ function BookingSpending() {
             <div className="mt-10 flex flex-wrap gap-4">
 
                 {
-                    bookingDetails?.map((value) => (
-                            renderDiv(value)
+                    bookingDetails?.map((value, index) => (
+                        <React.Fragment key={index}>
+                            {
+                                renderDiv(value)
+                            }
+                        </React.Fragment>
                     ))
                 }
 

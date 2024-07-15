@@ -49,7 +49,7 @@ function MyRentals() {
         params: {
           search: keyword,
           page: currentVehiclePage,
-          limit: vehiclePageSize,
+          size: vehiclePageSize,
           type: vehicleType
         },
       });

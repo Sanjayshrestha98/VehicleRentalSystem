@@ -12,6 +12,7 @@ import EditVehicle from './EditVehicle'
 import Swal from 'sweetalert2'
 import dayjs from 'dayjs'
 import VehicleLogs from './VehicleLogs'
+import LoadMore from '../../components/LoadMore'
 
 
 function BecomeAHost() {
@@ -19,11 +20,14 @@ function BecomeAHost() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [vehicleData, setVehicleData] = useState([])
     const [selectedVehicleData, setSelectedVehicleData] = useState("")
+    const [totalVehicleCount, setTotalVehicleCount] = useState("")
+    const [currentVehiclePage, setCurrentVehiclePage] = useState(1)
+    const [totalPage, setTotalPage] = useState(1)
+    const [vehiclePageSize, setVehiclePageSize] = useState(10)
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [tab, setTab] = useState(1)
 
-    const [bookingForOwner, setBookingForOwner] = useState([])
 
     const [packageList, setPackageList] = useState()
 
@@ -48,42 +52,33 @@ function BecomeAHost() {
 
     const getMyVehicles = async () => {
         try {
+            setIsLoading(true)
             let result = await axios.get("/vehicle/my-vehicle", {
-                // params: {
-                //     search: keyword,
-                //     page: currentVehiclePage,
-                //     limit: vehiclePageSize,
-                // },
+                params: {
+                    page: currentVehiclePage,
+                    size: vehiclePageSize,
+                },
             });
 
             if (result.data.success) {
-                setVehicleData(result.data.data); 
-                // setTotalVehicleCount(result.data.totalCount);
-                // setTotalVehiclePage(result.data.totalPage);
+                setIsLoading(false)
+                setVehicleData([...vehicleData, ...result.data.data]);
+                setTotalVehicleCount(result.data.totalCount);
+                setTotalPage(Math.ceil(result.data.totalCount / Number(result.data.size)));
             } else toast.error("Failed");
         } catch (ERR) {
+            setIsLoading(false)
             console.log(ERR);
             toast.error(ERR.response.data.msg);
         }
     }
 
-    const vehicleHistory = async () => {
-        try {
-            let result = await axios.get("/booking/booking-for-owner");
 
-            if (result.data.success) {
-                setBookingForOwner(result.data.data);
-            } else toast.error("Failed");
-        } catch (ERR) {
-            console.log(ERR);
-            toast.error(ERR.response.data.msg);
-        }
-    }
 
     useEffect(() => {
         getMyVehicles()
-        vehicleHistory()
-    }, [])
+    }, [currentVehiclePage])
+
 
     const removeItem = async (id) => {
         try {
@@ -147,33 +142,7 @@ function BecomeAHost() {
         }
     }
 
-
-    const changeStatus = async (id, status) => {
-        try {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, Change the Status!",
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    let result = await axios.put("booking/" + id, {
-                        status: status
-                    });
-                    if (result.data.success) {
-                        vehicleHistory();
-                        toast.success("Status Changed Successfully");
-                    }
-                }
-            });
-        } catch (ERR) {
-            console.log(ERR);
-            toast.error(ERR.response.data.msg);
-        }
-    };
+   
 
     return (
         <div className='max-w-7xl mx-auto p-5'>
@@ -224,92 +193,98 @@ function BecomeAHost() {
 
             {
                 tab === 1 &&
-                <div className='grid   gap-7 mt-10'>
-                    {
-                        vehicleData &&
-                        (vehicleData.length === 0 ?
-                            <p className='p-5 font-semibold text-red-800'>No Vehicles Yet</p> :
-                            vehicleData.map((value, index) => (
-                                <div className={` grid grid-cols-6 border  rounded-2xl  overflow-hidden relative`} key={index}>
-                                    {/* <img className='w-full h-64 mb-5 object-cover' src={`${value?.images[0]}`} /> */}
-                                    <div className='h-80  col-span-2  '>
-                                        <img className='w-full  h-full object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.images[0]}`} />
-                                    </div>
-
-                                    <div className='p-4 col-span-3 px-8 w-full'>
-                                        {/* <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} /> */}
-                                        <p className={`w-fit text-sm  font-semibold   rounded-2xl ${value.is_active ? "text-green-500" : "text-red-500"} `}> {value.is_active ? "Verified" : "Not Verified !!"} </p>
-                                        <h2 className='lg:text-2xl text-xl font-bold my-3 capitalize'>{value?.name}</h2>
-                                        <p> <b className='text-blue-700'>Rs. {value.price}</b> / Day</p>
-
-                                        <div className='grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-2 grid-cols-2 justify-center gap-8 mt-10 mb-3 '>
-                                            <div className='flex items-center  gap-2'>
-                                                <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
-                                                    <img className='h-4 ' src='/seat.png' />
-                                                </div>
-                                                <div className='text-sm'>
-                                                    <p className='uppercase font-semibold text-xs'>Passengers</p>
-                                                    <p className='capitalize'>{value?.seat} Seats</p>
-                                                </div>
-                                            </div>
-                                            <div className='flex items-center justify-items-center gap-2'>
-                                                <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
-                                                    <img className='h-4 ' src='/mileage.png' />
-                                                </div>
-                                                <div className='text-sm'>
-                                                    <p className='uppercase font-semibold text-xs'>Mileage:</p>
-                                                    <p className='capitalize'>{value?.mileage} Km/L</p>
-                                                </div>
-                                            </div>
-                                            <div className='flex items-center justify-items-center gap-2'>
-                                                <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
-                                                    <img className='h-4 ' src='/year.png' />
-                                                </div>
-                                                <div className='text-sm'>
-                                                    <p className='uppercase font-semibold text-xs'>Year:</p>
-                                                    <p className='capitalize'>{value?.year} Model</p>
-                                                </div>
-                                            </div>
-                                            <div className='flex items-center justify-items-center gap-2'>
-                                                <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
-                                                    <img className='h-4 ' src='/petrol.png' />
-                                                </div>
-                                                <div className='text-sm'>
-                                                    <p className='uppercase font-semibold text-xs'>Fuel:</p>
-                                                    <p className='capitalize'>{value?.fuel_type}</p>
-                                                </div>
-                                            </div>
-                                            <div className='flex items-center justify-items-center gap-2'>
-                                                <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-300'>
-                                                    <img className='h-4 ' src='/engine.png' />
-                                                </div>
-                                                <div className='text-sm'>
-                                                    <p className='uppercase font-semibold text-xs'>Engine:</p>
-                                                    <p className='capitalize'>{value?.engine}</p>
-                                                </div>
-                                            </div>
+                <>
+                    <div className='grid   gap-7 mt-10'>
+                        {
+                            vehicleData &&
+                            (vehicleData.length === 0 ?
+                                <p className='p-5 font-semibold text-red-800'>No Vehicles Yet</p> :
+                                vehicleData.map((value, index) => (
+                                    <div className={` grid grid-cols-6 border  rounded-2xl  overflow-hidden relative`} key={index}>
+                                        {/* <img className='w-full h-64 mb-5 object-cover' src={`${value?.images[0]}`} /> */}
+                                        <div className='h-80  col-span-2  '>
+                                            <img className='w-full  h-full object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.images[0]}`} />
                                         </div>
 
+                                        <div className='p-4 col-span-3 px-8 w-full'>
+                                            {/* <Rating initialRating={4.5} step={1} readonly fullSymbol={<BiSolidStar size={20} fill='#FFA128' />} emptySymbol={<BiStar size={20} fill='#FFA128' />} /> */}
+                                            <p className={`w-fit text-sm  font-semibold   rounded-2xl ${value.is_active ? "text-green-500" : "text-red-500"} `}> {value.is_active ? "Verified" : "Not Verified !!"} </p>
+                                            <h2 className='lg:text-2xl text-xl font-bold my-3 capitalize'>{value?.name}</h2>
+                                            <p> <b className='text-blue-700'>Rs. {value.price}</b> / Day</p>
+
+                                            <div className='grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-2 grid-cols-2 justify-center gap-8 mt-10 mb-3 '>
+                                                <div className='flex items-center  gap-2'>
+                                                    <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
+                                                        <img className='h-4 ' src='/seat.png' />
+                                                    </div>
+                                                    <div className='text-sm'>
+                                                        <p className='uppercase font-semibold text-xs'>Passengers</p>
+                                                        <p className='capitalize'>{value?.seat} Seats</p>
+                                                    </div>
+                                                </div>
+                                                <div className='flex items-center justify-items-center gap-2'>
+                                                    <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
+                                                        <img className='h-4 ' src='/mileage.png' />
+                                                    </div>
+                                                    <div className='text-sm'>
+                                                        <p className='uppercase font-semibold text-xs'>Mileage:</p>
+                                                        <p className='capitalize'>{value?.mileage} Km/L</p>
+                                                    </div>
+                                                </div>
+                                                <div className='flex items-center justify-items-center gap-2'>
+                                                    <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
+                                                        <img className='h-4 ' src='/year.png' />
+                                                    </div>
+                                                    <div className='text-sm'>
+                                                        <p className='uppercase font-semibold text-xs'>Year:</p>
+                                                        <p className='capitalize'>{value?.year} Model</p>
+                                                    </div>
+                                                </div>
+                                                <div className='flex items-center justify-items-center gap-2'>
+                                                    <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-200'>
+                                                        <img className='h-4 ' src='/petrol.png' />
+                                                    </div>
+                                                    <div className='text-sm'>
+                                                        <p className='uppercase font-semibold text-xs'>Fuel:</p>
+                                                        <p className='capitalize'>{value?.fuel_type}</p>
+                                                    </div>
+                                                </div>
+                                                <div className='flex items-center justify-items-center gap-2'>
+                                                    <div className='h-10 w-10 grid place-items-center p-2 rounded-full bg-gray-300'>
+                                                        <img className='h-4 ' src='/engine.png' />
+                                                    </div>
+                                                    <div className='text-sm'>
+                                                        <p className='uppercase font-semibold text-xs'>Engine:</p>
+                                                        <p className='capitalize'>{value?.engine}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div className='col-span-1 grid items-center p-4'>
+                                            <button className='btn-primary' onClick={() => {
+                                                setSelectedVehicleData(value)
+                                                openEditModal()
+                                            }}>Edit Information</button>
+                                            <button className='btn-danger' onClick={() => {
+                                                removeItem(value?._id)
+                                            }}>Delete</button>
+                                        </div>
                                     </div>
-                                    <div className='col-span-1 grid items-center p-4'>
-                                        <button className='btn-primary' onClick={() => {
-                                            setSelectedVehicleData(value)
-                                            openEditModal()
-                                        }}>Edit Information</button>
-                                        <button className='btn-danger' onClick={() => {
-                                            removeItem(value?._id)
-                                        }}>Delete</button>
-                                    </div>
-                                </div>
-                            )))
-                    }
-                </div>
+                                )))
+                        }
+                    </div>
+                    <div>
+                        <LoadMore loading={isLoading} setLoading={setIsLoading} page={currentVehiclePage} setPage={setCurrentVehiclePage} totalPage={totalPage} />
+                    </div>
+                </>
+
             }
- 
+
 
             {
                 tab === 2 &&
-                <VehicleLogs bookingForOwner={bookingForOwner} changeStatus={changeStatus} getRoute={vehicleHistory} />
+                <VehicleLogs loading={isLoading} setLoading={setIsLoading}/>
 
             }
 

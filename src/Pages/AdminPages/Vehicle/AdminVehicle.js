@@ -107,14 +107,14 @@ function AdminVehicle() {
                 params: {
                     search: keyword,
                     page: currentVehiclePage,
-                    limit: vehiclePageSize,
+                    size: vehiclePageSize,
                 },
             });
 
             if (result.data.success) {
                 setVehicleData(result.data.data);
                 setTotalVehicleCount(result.data.totalCount);
-                setTotalVehiclePage(result.data.totalPage);
+                setTotalVehiclePage(Math.ceil(result.data.totalCount / result.data.size));
             } else toast.error("Failed");
         } catch (ERR) {
             console.log(ERR);
@@ -128,14 +128,14 @@ function AdminVehicle() {
                 params: {
                     search: keyword,
                     page: currentVehiclePage,
-                    limit: vehiclePageSize,
+                    size: vehiclePageSize,
                 },
             });
 
             if (result.data.success) {
                 setUnverifiedVehicleData(result.data.data);
                 setUnverifiedTotalVehicleCount(result.data.totalCount);
-                setTotalUnverifiedVehiclePage(result.data.page);
+                setTotalUnverifiedVehiclePage(Math.ceil(result.data.totalCount / result.data.size));
             } else toast.error("Failed");
         } catch (ERR) {
             console.log(ERR);

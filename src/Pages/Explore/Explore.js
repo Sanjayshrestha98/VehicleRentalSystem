@@ -1,25 +1,35 @@
 import toast from 'react-hot-toast'
 import axios from '../../axios'
 import React, { useEffect, useState } from 'react'
-import { BiLoader, BiSolidStar, BiStar } from 'react-icons/bi'
+import { BiChevronDown, BiLoader, BiSolidStar, BiStar } from 'react-icons/bi'
 import { BsChevronDoubleRight } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import Rating from 'react-rating'
 import { Field, Form, Formik } from 'formik'
+import LoadMore from '../../components/LoadMore'
 
 function Explore() {
 
-    const [vehicleData, setVehicleData] = useState(null)
+    const [vehicleData, setVehicleData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [keyword, setKeyword] = useState("")
     const [totalVehicleCount, setTotalVehicleCount] = useState(10)
     const [totalVehiclePage, setTotalVehiclePage] = useState(10)
-    const [currentVehiclePage, setCurrentVehiclePage] = useState(1)
-    const [vehiclePageSize, setVehiclePageSize] = useState(10)
+    const [currentVehiclePage, setCurrentVehiclePage] = useState(0)
+    const [vehiclePageSize, setVehiclePageSize] = useState(20)
 
+    const [showData, setShowData] = useState(false)
     const [minPrice, setMinPrice] = useState(0)
     const [maxPrice, setMaxPrice] = useState(0)
     const [vehicleType, setVehicleType] = useState("")
+    const [vehicleParams, setVehicleParams] = useState({
+        pickup_date: "",
+        drop_date: "",
+        type: "",
+        search: "",
+        min: "",
+        max: "",
+    })
 
     // const getAllVehicle = async (min, max) => {
     //     try {
@@ -27,7 +37,7 @@ function Explore() {
     //             params: {
     //                 search: keyword,
     //                 page: currentVehiclePage,
-    //                 limit: vehiclePageSize,
+    //                 size: vehiclePageSize,
     //                 min: min,
     //                 max: max,
     //                 type: vehicleType
@@ -46,27 +56,37 @@ function Explore() {
     //     }
     // }
 
+    console.log('vehicleData', vehicleData)
+
     const searchVehicle = async (values) => {
         try {
+            setIsLoading(true)
+            setCurrentVehiclePage(currentVehiclePage + 1)
+            let page = currentVehiclePage + 1
             let result = await axios.get("/vehicle/search", {
                 params: {
-                    pickup_date: values.pickup_date,
-                    drop_date: values.drop_date,
-                    type: values.type,
-                    search: values.search,
-                    min: values.min,
-                    max: values.max,
+                    pickup_date: values?.pickup_date || vehicleParams.pickup_date,
+                    drop_date: values?.drop_date || vehicleParams.drop_date,
+                    type: values?.type || vehicleParams.type,
+                    search: values?.search || vehicleParams.search,
+                    min: values?.min || vehicleParams.min,
+                    max: values?.max || vehicleParams.max,
+                    page: page,
+                    size: vehiclePageSize,
+
                 },
             });
 
             if (result.data.success) {
-                setVehicleData(result.data.data);
-                // setTotalVehicleCount(result.data.totalCount);
-                // setTotalVehiclePage(result.data.totalPage);
+                setIsLoading(false)
+                setVehicleData([...vehicleData, ...result?.data?.data]);
+                setTotalVehicleCount(result.data.totalCount);
+                setTotalVehiclePage(Math.ceil(result.data.totalCount / Number(result.data.size)));
             } else toast.error("Failed");
         } catch (ERR) {
             console.log(ERR);
-            toast.error(ERR.response.data.msg);
+            toast.error(ERR?.response?.data?.msg);
+            setIsLoading(false)
         }
     }
 
@@ -76,6 +96,10 @@ function Explore() {
     //     getAllVehicle()
     // }, [keyword, totalVehiclePage, totalVehicleCount, vehicleType])
 
+    // useEffect(() => {
+    //     searchVehicle(vehicleParams)
+    // }, [currentVehiclePage])
+
 
 
     return (
@@ -83,7 +107,7 @@ function Explore() {
 
             {
                 isLoading &&
-                <div className='fixed h-screen top-0 w-full bg-black bg-opacity-65 z-[999999] grid place-items-center'>
+                <div className='fixed h-screen left-0 top-0 w-full bg-black bg-opacity-65 z-[999999] grid place-items-center'>
                     <label className='flex items-center gap-3 font-semibold text-white'><BiLoader className='animate-spin' /> Loading... </label>
                 </div>
             }
@@ -101,10 +125,13 @@ function Explore() {
                         max: ""
                     }}
                     onSubmit={(values, actions) => {
+                        setVehicleData([])
+                        setShowData(true)
+                        setVehicleParams(values)
                         searchVehicle(values, actions)
                     }}>
                     {(props) => (
-                        <Form> 
+                        <Form>
                             <div className='grid grid-cols-3 gap-4 mt-10'>
                                 <div className='w-full'>
                                     <label>Pickup Date</label>
@@ -222,8 +249,9 @@ function Explore() {
                         setKeyword(e.target.value)
                     }} placeholder='Search Here..............' />
                 </div> */}
+
                 {
-                    vehicleData &&
+                    showData &&
                     <>
 
                         <div className='max-w-7xl mx-auto  px-5 mb-10'>
@@ -238,7 +266,11 @@ function Explore() {
                                             <div className='relative'>
                                                 <span className='w-fit absolute bg-blue-800 top-4 right-4 p-1 px-4 text-sm text-white rounded-md'>{value?.year} model</span>
                                                 {/* <img className='w-full h-64 mb-5 object-cover' src={`${value?.images[0]}`} /> */}
-                                                <img className='w-full h-64 mb-5 object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.images[0]}`} />
+                                                {
+                                                    value?.images &&
+
+                                                    <img className='w-full h-64 mb-5 object-cover' src={`${process.env.REACT_APP_IMG_URI}${value?.images[0]}`} />
+                                                }
                                             </div>
 
                                             <div className='p-3 px-4 text-center'>
@@ -270,6 +302,19 @@ function Explore() {
                                     )))
                             }
                         </div>
+
+                        {
+                            (currentVehiclePage !== totalVehiclePage || isLoading) &&
+                            <div className='my-10 flex items-center text-center justify-center w-full' >
+                                <button className='items-center flex gap-3 bg-green-600 p-3 rounded-md px-4 text-sm text-white font-semibold' onClick={() => {
+                                    setIsLoading(true)
+                                    searchVehicle()
+
+                                }}> <span>{!isLoading ? <BiChevronDown /> : <BiLoader className='animate-spin' />} </span> Load More</button>
+                            </div>
+                        }
+
+                        {/* <LoadMore loading={isLoading} page={currentVehiclePage} setLoading={setIsLoading} setPage={setCurrentVehiclePage} totalPage={totalVehiclePage} clickAction={searchVehicle} /> */}
                     </>
                 }
             </div>
