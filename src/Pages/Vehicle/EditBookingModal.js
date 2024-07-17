@@ -12,11 +12,13 @@ function EditBookingModal({ modalIsOpen, closeModal, getRoute, data, isOwner = f
         try {
             let result = await axios.put('/booking/' + data._id, {
                 contact: values.contact,
-                address: values.address
+                address: values.address,
+                drop_date: values.drop_date,
+                pickup_date: values.pickup_date,
             })
 
             if (result.data.success) {
-                toast.success('User Added Successfully')
+                toast.success('Details Edited Successfully')
                 closeModal()
                 getRoute()
             } else toast.error('Failed')
@@ -54,7 +56,7 @@ function EditBookingModal({ modalIsOpen, closeModal, getRoute, data, isOwner = f
                 >
                     {(props) => (
                         <Form className='gap-3 grid md:grid-cols-2'>
-                            <div className=''> 
+                            <div className=''>
                                 <label htmlFor="firstname" className="block text-sm font-medium leading-6 text-gray-900">
                                     First Name
                                 </label>

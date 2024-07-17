@@ -15,8 +15,8 @@ function Explore() {
     const [isLoading, setIsLoading] = useState(false)
     const [keyword, setKeyword] = useState("")
     const [totalVehicleCount, setTotalVehicleCount] = useState(10)
-    const [totalVehiclePage, setTotalVehiclePage] = useState(10)
-    const [currentVehiclePage, setCurrentVehiclePage] = useState(0)
+    const [totalVehiclePage, setTotalVehiclePage] = useState(1)
+    const [currentVehiclePage, setCurrentVehiclePage] = useState(1)
     const [vehiclePageSize, setVehiclePageSize] = useState(20)
 
     const [showData, setShowData] = useState(false)
@@ -59,11 +59,14 @@ function Explore() {
 
     console.log('vehicleData', vehicleData)
 
-    const searchVehicle = async (values) => {
+    const searchVehicle = async (values, loadMore, actions) => {
         try {
             setIsLoading(true)
-            setCurrentVehiclePage(currentVehiclePage + 1)
-            let page = currentVehiclePage + 1
+            let page = currentVehiclePage
+            if (loadMore === true) {
+                page = currentVehiclePage + 1
+                setCurrentVehiclePage(currentVehiclePage + 1)
+            }
             let result = await axios.get("/vehicle/search", {
                 params: {
                     pickup_date: values?.pickup_date || vehicleParams.pickup_date,
@@ -82,6 +85,8 @@ function Explore() {
                 setIsLoading(false)
                 setVehicleData([...vehicleData, ...result?.data?.data]);
                 setTotalVehicleCount(result.data.totalCount);
+                console.log('result.data.totalCount', result.data.totalCount)
+                console.log('result.data.size', result.data.size)
                 setTotalVehiclePage(Math.ceil(result.data.totalCount / Number(result.data.size)));
             } else toast.error("Failed");
         } catch (ERR) {
@@ -91,6 +96,7 @@ function Explore() {
         }
     }
 
+    console.log('totalVehiclePage', totalVehiclePage)
 
 
     // useEffect(() => {
@@ -129,7 +135,7 @@ function Explore() {
                         setVehicleData([])
                         setShowData(true)
                         setVehicleParams(values)
-                        searchVehicle(values, actions)
+                        searchVehicle(values, false, actions)
                     }}>
                     {(props) => (
                         <Form>
@@ -306,16 +312,19 @@ function Explore() {
                             }
                         </div>
 
-                        {
-                            (currentVehiclePage !== totalVehiclePage || isLoading) &&
-                            <div className='my-10 flex items-center text-center justify-center w-full' >
-                                <button className='items-center flex gap-3 bg-green-600 p-3 rounded-md px-4 text-sm text-white font-semibold' onClick={() => {
-                                    setIsLoading(true)
-                                    searchVehicle()
+                        {vehicleData.length !== 0 &&
+                            <>
+                                {(currentVehiclePage !== totalVehiclePage || isLoading) &&
+                                    <div className='my-10 flex items-center text-center justify-center w-full' >
+                                        <button className='items-center flex gap-3 bg-green-600 p-3 rounded-md px-4 text-sm text-white font-semibold' onClick={() => {
+                                            setIsLoading(true)
+                                            searchVehicle(vehicleParams, true)
 
-                                }}> <span>{!isLoading ? <BiChevronDown /> : <BiLoader className='animate-spin' />} </span> Load More</button>
-                            </div>
+                                        }}> <span>{!isLoading ? <BiChevronDown /> : <BiLoader className='animate-spin' />} </span> Load More</button>
+                                    </div>}
+                            </>
                         }
+
 
                         {/* <LoadMore loading={isLoading} page={currentVehiclePage} setLoading={setIsLoading} setPage={setCurrentVehiclePage} totalPage={totalVehiclePage} clickAction={searchVehicle} /> */}
                     </>

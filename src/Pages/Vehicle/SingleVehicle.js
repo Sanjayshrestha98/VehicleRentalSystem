@@ -16,8 +16,10 @@ function SingleVehicle() {
     const [isLoading, setIsLoading] = useState(false)
 
     const { sku } = useParams()
-    const { isAuthenticated } = useContext(AuthContext)
+    const { isAuthenticated, userDetails } = useContext(AuthContext)
     const [selectedImage, setSelectedImage] = useState();
+
+    console.log('userDetails', userDetails?._id)
 
     const [isAgree, setIsAgree] = useState(false);
     const [rating, setRating] = useState(0);
@@ -516,7 +518,7 @@ function SingleVehicle() {
 
                             <div>
                                 {
-                                    isAuthenticated &&
+                                    (isAuthenticated && vehicleData?.user?._id != userDetails?._id) &&
                                     <button className='btn-primary' onClick={() => {
                                         setModalIsOpen(true)
                                         setPackageList(vehicleData)
