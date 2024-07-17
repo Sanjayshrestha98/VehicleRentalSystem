@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import Rating from 'react-rating'
 import { Field, Form, Formik } from 'formik'
 import LoadMore from '../../components/LoadMore'
+import dayjs from 'dayjs'
 
 function Explore() {
 
@@ -135,7 +136,7 @@ function Explore() {
                             <div className='grid grid-cols-3 gap-4 mt-10'>
                                 <div className='w-full'>
                                     <label>Pickup Date</label>
-                                    <Field className='inputfield mt-2' required name='pickup_date' type='date' />
+                                    <Field className='inputfield mt-2' required name='pickup_date' type='date' min={dayjs().format('YYYY-MM-DD')} />
                                 </div>
                                 <div className='w-full'>
                                     <label>Drop Date</label>

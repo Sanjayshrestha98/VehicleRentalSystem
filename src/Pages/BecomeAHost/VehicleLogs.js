@@ -25,7 +25,7 @@ function VehicleLogs({ loading, setLoading }) {
 
             if (result.data.success) {
                 setLoading(false)
-                setBookingForOwner([...bookingForOwner, ...result.data.data]);
+                setBookingForOwner(result.data.data);
                 setTotalPage(Math.ceil(result.data.totalCount / Number(result.data.size)))
             } else toast.error("Failed");
         } catch (ERR) {

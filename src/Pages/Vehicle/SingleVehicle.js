@@ -59,7 +59,10 @@ function SingleVehicle() {
     }
 
     useEffect(() => {
-        getMyBookings()
+        if (isAuthenticated) {
+            getMyBookings()
+        }
+
     }, [])
 
     const closeModal = () => {
@@ -78,7 +81,7 @@ function SingleVehicle() {
             let result = await axios.get('/vehicle/' + sku)
 
             if (result.data.success) {
-                setVehicleData(result.data.data) 
+                setVehicleData(result.data.data)
                 setSelectedImage(result.data.data.images[0])
                 getReview(result.data.data._id)
             } else toast.error('Failed')
@@ -249,11 +252,11 @@ function SingleVehicle() {
                                     </div> */}
                                     <div className=''>
                                         <label>Pick Date</label>
-                                        <Field name="pickup_date" className='inputfield mt-2' type="datetime-local" />
+                                        <Field name="pickup_date" className='inputfield mt-2' type="date" min={dayjs().format('YYYY-MM-DD')} />
                                     </div>
                                     <div className=''>
                                         <label>Drop Date</label>
-                                        <Field name="drop_date" className='inputfield mt-2' type="datetime-local" />
+                                        <Field name="drop_date" className='inputfield mt-2' type="date" min={props.values.pickup_date} />
                                     </div>
                                     <div className='col-span-full'>
                                         <label>Address</label>

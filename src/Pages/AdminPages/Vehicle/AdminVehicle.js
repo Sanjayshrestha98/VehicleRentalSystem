@@ -64,7 +64,7 @@ function AdminVehicle() {
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, Delete it!",
+                confirmButtonText: "Yes, Verify it!",
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     let result = await axios.put("vehicle/verify-vehicle/" + id);

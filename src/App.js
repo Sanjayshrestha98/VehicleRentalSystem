@@ -24,6 +24,7 @@ import SingleVehicle from './Pages/Vehicle/SingleVehicle';
 import AdminVehicle from './Pages/AdminPages/Vehicle/AdminVehicle';
 import MyRentals from './Pages/MyRentals/MyRentals';
 import BecomeAHost from './Pages/BecomeAHost/BecomeAHost';
+import Services from './Pages/Services/Services';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/services" element={<Services />} />
               <Route path="/vehicle/:sku" element={<SingleVehicle />} />
 
               <Route path="/explore" element={<Coaching />} />
