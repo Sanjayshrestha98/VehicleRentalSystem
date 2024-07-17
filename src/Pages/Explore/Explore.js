@@ -147,9 +147,10 @@ function Explore() {
 
                                         <Field
                                             placeholder='Min'
-                                            onChange={(e) => {
-                                                setMinPrice(e.target.value)
-                                            }}
+                                            name="min"
+                                            // onChange={(e) => {
+                                            //     setMinPrice(e.target.value)
+                                            // }}
                                             type="number"
                                             className="inputfield w-full"
                                             min="10"
@@ -158,12 +159,13 @@ function Explore() {
 
                                         <Field
                                             placeholder='max'
-                                            onChange={(e) => {
-                                                setMaxPrice(e.target.value)
-                                            }}
+                                            // onChange={(e) => {
+                                            //     setMaxPrice(e.target.value)
+                                            // }}
+                                            name="max"
                                             type="number"
                                             className="inputfield w-full"
-                                            min={minPrice}
+                                            min={props.values.min}
                                             max="100000"
                                             step="1" />
                                     </div>
